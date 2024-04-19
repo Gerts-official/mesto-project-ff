@@ -29,4 +29,9 @@ export const initialCards = [
 
 // Функция создания карточки
 
+
+
 // Функция удаления и лайка карточки 
+export function deleteCard(cardElement) {
+  cardElement.remove();
+}
