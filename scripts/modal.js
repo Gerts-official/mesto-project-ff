@@ -1,49 +1,57 @@
-// DOM объекты
-const modalContainer = document.querySelector('.page__content');
-const closeButton = document.querySelector('.popup__close');
-
-
 // Функция открытия модального окна 
 function openPopup(popupType) {
-    document.querySelector(`.popup_type_${popupType}`).classList.add('popup_is-opened');
+    const popup = document.querySelector(`.popup_type_${popupType}`);
+    popup.classList.add('popup_is-opened');
+
+
+    // Навешиваем все слушатели по закрытию
+    document.querySelector('.page__content').addEventListener('click', handlePopupCloseButtonClick);
+    document.addEventListener('keydown', handleEscClose);
+    document.addEventListener('click', handleOverlayClose);
 }
 
 // Функция закрытия модального окна 
-export function closePopup(evt) {
-    let popup = evt.target.closest('.popup');
-    popup.classList.remove('popup_is-opened');
+ export function closePopup() {
+    const openedPopup = document.querySelector('.popup.popup_is-opened');
+    openedPopup.classList.remove('popup_is-opened');
+
+
+    // Снимаем все слушатели по закрытию
+    document.querySelector('.page__content').removeEventListener('click', handlePopupCloseButtonClick);
+    document.removeEventListener('keydown', handleEscClose);
+    document.removeEventListener('click', handleOverlayClose);
 }
 
-// Функция-обработчик закрытия модального окна 
-modalContainer.addEventListener('click', function(evt) {
-    if (evt.target.classList.contains('popup__close')) {
-        closePopup(evt);
-    }
-});
-
-
-export function handlePopupButtonClick(evt){
-    let targetButton = evt.target;
-    console.log(targetButton);
-    if(targetButton.classList.contains('profile__edit-button')) {
-        openPopup('edit');
-        } else if(targetButton.classList.contains('profile__add-button')) {
-            openPopup('new-card');
-            }
-    }
-
-// Функция обработчик события нажатия Esc
-
-document.addEventListener('keydown', function(evt) {
+// Функция-обработчик нажатия клавиши Esc
+function handleEscClose(evt) {
     if (evt.key === 'Escape') {
-        console.log(evt.target);
-        closePopup(evt);
-    } 
-});
-
-// Функция обработчик события клика по оверлею 
-modalContainer.addEventListener('click', function(evt) {
-    if (evt.target.classList.contains('popup')) {
-        closePopup(evt);
+        closePopup();
     }
-});
+}
+
+// Функция-обработчик закрытия по клику на оверлей
+function handleOverlayClose(evt) {
+    if (evt.target.classList.contains('popup')) {
+        closePopup();
+    }
+}
+
+
+// Функция-обработчик клика по кнопке закрытия попапа
+function handlePopupCloseButtonClick(evt) {
+    if (evt.target.classList.contains('popup__close')) {
+        closePopup();
+    }
+}
+
+// Функция-обработчик открытия попапа по клику
+export function handlePopupButtonClick(evt) {
+    const targetButton = evt.target;
+    if (targetButton.classList.contains('profile__edit-button')) {
+        openPopup('edit');
+    } else if (targetButton.classList.contains('profile__add-button')) {
+        openPopup('new-card');
+    }
+}
+
+
