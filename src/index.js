@@ -45,14 +45,19 @@ const formEditProfile = document.querySelector('.popup_type_edit');
 // Находим поля формы в DOM
 const profileInputName = formEditProfile.querySelector('.popup__input_type_name');
 const profileInputJub = formEditProfile.querySelector('.popup__input_type_description');
+const profileInputLink = formEditProfile.querySelector('.popup__input_type_link');
 const profileName = document.querySelector('.profile__title');
 const profileJob = document.querySelector('.profile__description');
+const profileImage = document.querySelector('.profile__image');
+
 
 function handleFormSubmit(evt) {
     evt.preventDefault(); 
     closePopup();
     profileName.textContent = profileInputName.value;
     profileJob.textContent = profileInputJub.value;
+    profileImage.style.backgroundImage = `url(${profileInputLink.value})`;
+
     profileInputName.value = '';
     profileInputJub.value = '';
 }
