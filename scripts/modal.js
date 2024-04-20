@@ -1,13 +1,11 @@
 // Функция открытия модального окна 
-function openPopup(popupType) {
+export function openPopup(popupType) {
     const popup = document.querySelector(`.popup_type_${popupType}`);
     popup.classList.add('popup_is-opened');
 
 
-    // Навешиваем все слушатели по закрытию
-    document.querySelector('.page__content').addEventListener('click', handlePopupCloseButtonClick);
-    document.addEventListener('keydown', handleEscClose);
-    document.addEventListener('click', handleOverlayClose);
+    // Активируем все слушатели по закрытию
+    activateClosingEventListeners();
 }
 
 // Функция закрытия модального окна 
@@ -46,12 +44,35 @@ function handlePopupCloseButtonClick(evt) {
 
 // Функция-обработчик открытия попапа по клику
 export function handlePopupButtonClick(evt) {
-    const targetButton = evt.target;
-    if (targetButton.classList.contains('profile__edit-button')) {
+    const targetClick = evt.target;
+    if (targetClick.classList.contains('profile__edit-button')) {
         openPopup('edit');
-    } else if (targetButton.classList.contains('profile__add-button')) {
+    } else if (targetClick.classList.contains('profile__add-button')) {
         openPopup('new-card');
+    } else if (targetClick.classList.contains('card__image')) {
+        console.log(evt.target);
+        cardScale(evt);
     }
 }
 
+function cardScale(evt) {
+    const popupImage = document.querySelector('.popup_type_image');
+    const popupImageLink = popupImage.querySelector('.popup__image');
+    const popupImageCaption = popupImage.querySelector('.popup__caption');
+    const currentCard = evt.target.parentNode;
 
+    const currentCardLink = currentCard.querySelector('.card__image').src;
+    const currentCardCaption = currentCard.querySelector('.card__title').textContent;
+
+    popupImageLink.src = currentCardLink;
+    popupImageCaption.textContent = currentCardCaption;
+    popupImage.classList.add('popup_is-opened');
+    activateClosingEventListeners();
+}
+
+
+export function activateClosingEventListeners() {
+    document.querySelector('.page__content').addEventListener('click', handlePopupCloseButtonClick);
+    document.addEventListener('keydown', handleEscClose);
+    document.addEventListener('click', handleOverlayClose);
+}

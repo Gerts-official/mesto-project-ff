@@ -1,19 +1,19 @@
 // Import CSS
 import '../pages/index.css';
 // Import cards.js
-import { initialCards, deleteCard } from '../scripts/cards.js';
+import { initialCards, deleteCard, likeFunction } from '../scripts/cards.js';
 // Import modal.js
 import { handlePopupButtonClick, closePopup } from '../scripts/modal.js';
-  
-// @todo: Темплейт карточки
+
+// DOM узлы
 const cardTemplate = document.querySelector('#card-template').content; 
-
-// @todo: DOM узлы
 const cardList =  document.querySelector('.places__list');
-const openPupupButtons = document.querySelectorAll('.profile__edit-button, .profile__add-button');
 const formNewCard = document.querySelector('.popup_type_new-card');
+const formEditProfile = document.querySelector('.popup_type_edit');
 
-// @todo: Функция создания карточек
+
+
+// Функция создания карточек
 function createCard(item, deleteCardCallback) {
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
     cardElement.querySelector('.card__image').src = item.link;
@@ -28,27 +28,19 @@ function createCard(item, deleteCardCallback) {
     return cardElement;
 }
 
-// Функция отображения шести карточек при загрузке страницы
+// Функция создания шести карточек при загрузке страницы
 initialCards.forEach(function(item) {
     const card = createCard(item, deleteCard);
     cardList.append(card);
 });
 
-// Функция-обработчик события открытия модального окна для редактирования профиля и добавления карточки
-openPupupButtons.forEach((button) => {
-    button.addEventListener('click', handlePopupButtonClick);
-});
-
-// Функция редактирования профайла 
-
-const formEditProfile = document.querySelector('.popup_type_edit');
-// Находим поля формы в DOM
-const profileInputName = formEditProfile.querySelector('.popup__input_type_name');
-const profileInputJub = formEditProfile.querySelector('.popup__input_type_description');
-const profileName = document.querySelector('.profile__title');
-const profileJob = document.querySelector('.profile__description');
-
+// Функция - обработчик редактирования профайла
 function handleFormSubmit(evt) {
+    const profileInputName = formEditProfile.querySelector('.popup__input_type_name');
+    const profileInputJub = formEditProfile.querySelector('.popup__input_type_description');
+    const profileName = document.querySelector('.profile__title');
+    const profileJob = document.querySelector('.profile__description');
+
     evt.preventDefault(); 
     closePopup();
     profileName.textContent = profileInputName.value;
@@ -57,51 +49,8 @@ function handleFormSubmit(evt) {
     profileInputJub.value = '';
 }
 
-// Прикрепляем обработчик к форме:
-// он будет следить за событием “submit” - «отправка»
-formEditProfile.addEventListener('submit', handleFormSubmit);
-
-
-
-// Раздел создания новой карточки
-
-// DOM
-// DOM
-function cardLike() {
-    let cards = document.querySelectorAll('.card');
-    cards.forEach((item) => {
-        item.querySelector('.card__like-button').addEventListener('click', likeFunction);
-        item.querySelector('.card__image').addEventListener('click', cardScale);
-    });
-}
-
-// Like Function Evt
-function likeFunction(evt) {
-    evt.target.classList.toggle('card__like-button_is-active');
-}
-
-function cardScale(evt) {
-    const popupImage = document.querySelector('.popup_type_image');
-    const popupImageLink = popupImage.querySelector('.popup__image');
-    const popupImageCaption = popupImage.querySelector('.popup__caption');
-    const currentCard = evt.target.parentNode;
-    
-    const currentCardLink = currentCard.querySelector('.card__image').src;
-    const currentCardCaption = currentCard.querySelector('.card__title').textContent;
-
-    popupImageLink.src = currentCardLink;
-    popupImageCaption.textContent = currentCardCaption;
-    popupImage.classList.add('popup_is-opened');
-
-
-}
-
-
-
-
-
 // Функция создания карточки
-function handleNewCardSubmit(evt) {
+function handleNewCardSubmit(evt) { 
     evt.preventDefault();
     let formInputLink = formNewCard.querySelector('.popup__input_type_url');
     let formInputName = formNewCard.querySelector('.popup__input_type_card-name');
@@ -116,34 +65,18 @@ function handleNewCardSubmit(evt) {
     closePopup();
     formInputLink.value = '';
     formInputName.value = '';
-    cardLike();
+    formNewCard.removeEventListener('submit', handleNewCardSubmit);
   }
 
 
+// Прикрепляем обработчик к форме:он будет следить за событием “submit” - «отправка»
+formEditProfile.addEventListener('submit', handleFormSubmit);
 
+// Обработчик лайка 
+cardList.addEventListener('click', likeFunction);
+
+// Обработчик создания новой карты, кнопка SUBMIT
 formNewCard.addEventListener('submit', handleNewCardSubmit);
 
-
-
-// РАЗДЕЛ ПОПАП КАРТИНКА
-
-
-
-
-
-
-cardLike();
-
-
-
-
-
-
-
-
-
-// Функция открытия модального окна изображения карточки
-
-// Обработчики отправки форм
-
-
+// Обработчик открытия модальных окон
+document.querySelector('.page__content').addEventListener('click', handlePopupButtonClick);

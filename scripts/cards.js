@@ -1,5 +1,3 @@
-
-
 // Массив карточек, отображаемых при загрузки страницы
 export const initialCards = [
     {
@@ -29,13 +27,12 @@ export const initialCards = [
 ];
 
 
-
-
-
-// Функция удаления и лайка карточки 
+// Функция - обработчик удаления карточки 
 export function deleteCard(cardElement) {
   cardElement.remove();
 }
 
-// Раздел лайка карточки
-// DOM
+// Функция - обработчик лайка карточки 
+export function likeFunction(evt) {
+  evt.target.classList.toggle('card__like-button_is-active');
+}
