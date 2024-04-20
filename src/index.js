@@ -11,6 +11,7 @@ const cardTemplate = document.querySelector('#card-template').content;
 // @todo: DOM узлы
 const cardList =  document.querySelector('.places__list');
 const openPupupButtons = document.querySelectorAll('.profile__edit-button, .profile__add-button');
+const formNewCard = document.querySelector('.popup_type_new-card');
 
 // @todo: Функция создания карточек
 function createCard(item, deleteCardCallback) {
@@ -40,27 +41,71 @@ openPupupButtons.forEach((button) => {
 
 // Функция редактирования профайла 
 
-const formElement = document.querySelector('.popup_type_edit');
+const formEditProfile = document.querySelector('.popup_type_edit');
 // Находим поля формы в DOM
-const nameInput = formElement.querySelector('.popup__input_type_name');
-const jobInput = formElement.querySelector('.popup__input_type_description');
-const profileTitle = document.querySelector('.profile__title');
-const profileDescription = document.querySelector('.profile__description');
+const profileInputName = formEditProfile.querySelector('.popup__input_type_name');
+const profileInputJub = formEditProfile.querySelector('.popup__input_type_description');
+const profileName = document.querySelector('.profile__title');
+const profileJob = document.querySelector('.profile__description');
 
 function handleFormSubmit(evt) {
     evt.preventDefault(); 
     closePopup();
-    profileTitle.textContent = nameInput.value;
-    profileDescription.textContent = jobInput.value;
-    nameInput.value = '';
-    jobInput.value = '';
+    profileName.textContent = profileInputName.value;
+    profileJob.textContent = profileInputJub.value;
+    profileInputName.value = '';
+    profileInputJub.value = '';
 }
 
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
-formElement.addEventListener('submit', handleFormSubmit);
+formEditProfile.addEventListener('submit', handleFormSubmit);
+
+
+
+// Раздел создания новой карточки
+
+// DOM
+
+
+// Функция создания карточки
+function handleNewCardSubmit(evt) {
+    evt.preventDefault();
+    let formInputLink = formNewCard.querySelector('.popup__input_type_url');
+    let formInputName = formNewCard.querySelector('.popup__input_type_card-name');
+  
+    const newCardData = {
+        link: formInputLink.value,
+        name: formInputName.value
+    }
+  
+    const newCardElement = createCard(newCardData, deleteCard);
+    cardList.prepend(newCardElement);
+    closePopup();
+    formInputLink.value = '';
+    formInputName.value = '';
+  }
+
+
+
+formNewCard.addEventListener('submit', handleNewCardSubmit);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Функция открытия модального окна изображения карточки
 
 // Обработчики отправки форм
+
+

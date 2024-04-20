@@ -1,4 +1,5 @@
 
+
 // Массив карточек, отображаемых при загрузки страницы
 export const initialCards = [
     {
@@ -27,10 +28,7 @@ export const initialCards = [
     }
 ];
 
-// Функция создания карточки
-function createCard (cardInfo){
-  const newCardInfo = document.querySelector('.popup_type_new-card');
-}
+
 
 
 
