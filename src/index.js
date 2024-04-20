@@ -68,15 +68,32 @@ formEditProfile.addEventListener('submit', handleFormSubmit);
 // DOM
 // DOM
 function cardLike() {
-    let likes = document.querySelectorAll('.card__like-button');
-    likes.forEach((item) => {
-        item.addEventListener('click', likeFunction);
+    let cards = document.querySelectorAll('.card');
+    cards.forEach((item) => {
+        item.querySelector('.card__like-button').addEventListener('click', likeFunction);
+        item.querySelector('.card__image').addEventListener('click', cardScale);
     });
 }
 
 // Like Function Evt
 function likeFunction(evt) {
     evt.target.classList.toggle('card__like-button_is-active');
+}
+
+function cardScale(evt) {
+    const popupImage = document.querySelector('.popup_type_image');
+    const popupImageLink = popupImage.querySelector('.popup__image');
+    const popupImageCaption = popupImage.querySelector('.popup__caption');
+    const currentCard = evt.target.parentNode;
+    
+    const currentCardLink = currentCard.querySelector('.card__image').src;
+    const currentCardCaption = currentCard.querySelector('.card__title').textContent;
+
+    popupImageLink.src = currentCardLink;
+    popupImageCaption.textContent = currentCardCaption;
+    popupImage.classList.add('popup_is-opened');
+
+
 }
 
 
@@ -108,7 +125,8 @@ formNewCard.addEventListener('submit', handleNewCardSubmit);
 
 
 
-// Функция изменения картинки профайла 
+// РАЗДЕЛ ПОПАП КАРТИНКА
+
 
 
 
