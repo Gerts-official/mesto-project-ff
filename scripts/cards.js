@@ -36,3 +36,6 @@ export const initialCards = [
 export function deleteCard(cardElement) {
   cardElement.remove();
 }
+
+// Раздел лайка карточки
+// DOM

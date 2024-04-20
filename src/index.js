@@ -66,6 +66,21 @@ formEditProfile.addEventListener('submit', handleFormSubmit);
 // Раздел создания новой карточки
 
 // DOM
+// DOM
+function cardLike() {
+    let likes = document.querySelectorAll('.card__like-button');
+    likes.forEach((item) => {
+        item.addEventListener('click', likeFunction);
+    });
+}
+
+// Like Function Evt
+function likeFunction(evt) {
+    evt.target.classList.toggle('card__like-button_is-active');
+}
+
+
+
 
 
 // Функция создания карточки
@@ -84,6 +99,7 @@ function handleNewCardSubmit(evt) {
     closePopup();
     formInputLink.value = '';
     formInputName.value = '';
+    cardLike();
   }
 
 
@@ -92,9 +108,13 @@ formNewCard.addEventListener('submit', handleNewCardSubmit);
 
 
 
+// Функция изменения картинки профайла 
 
 
 
+
+
+cardLike();
 
 
 
