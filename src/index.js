@@ -3,14 +3,14 @@ import '../pages/index.css';
 // Import cards.js
 import { initialCards, deleteCard, likeFunction } from '../scripts/cards.js';
 // Import modal.js
-import { handlePopupButtonClick, closePopup } from '../scripts/modal.js';
+import { handlePopupButtonClick, closePopup, pageContent } from '../scripts/modal.js';
+
 
 // DOM узлы
 const cardTemplate = document.querySelector('#card-template').content; 
 const cardList =  document.querySelector('.places__list');
 const formNewCard = document.querySelector('.popup_type_new-card');
 const formEditProfile = document.querySelector('.popup_type_edit');
-
 
 
 // Функция создания карточек
@@ -28,11 +28,13 @@ function createCard(item, deleteCardCallback) {
     return cardElement;
 }
 
+
 // Функция создания шести карточек при загрузке страницы
 initialCards.forEach(function(item) {
     const card = createCard(item, deleteCard);
     cardList.append(card);
 });
+
 
 // Функция - обработчик редактирования профайла
 function handleFormSubmit(evt) {
@@ -42,12 +44,14 @@ function handleFormSubmit(evt) {
     const profileJob = document.querySelector('.profile__description');
 
     evt.preventDefault(); 
-    closePopup();
+    
     profileName.textContent = profileInputName.value;
     profileJob.textContent = profileInputJub.value;
     profileInputName.value = '';
     profileInputJub.value = '';
+    closePopup();
 }
+
 
 // Функция создания карточки
 function handleNewCardSubmit(evt) { 
@@ -62,21 +66,25 @@ function handleNewCardSubmit(evt) {
   
     const newCardElement = createCard(newCardData, deleteCard);
     cardList.prepend(newCardElement);
-    closePopup();
     formInputLink.value = '';
     formInputName.value = '';
+
     formNewCard.removeEventListener('submit', handleNewCardSubmit);
-  }
+    closePopup();
+}
 
 
-// Прикрепляем обработчик к форме:он будет следить за событием “submit” - «отправка»
+// Обработчик редактирования профиля, кнопка SUBMIT
 formEditProfile.addEventListener('submit', handleFormSubmit);
+
 
 // Обработчик лайка 
 cardList.addEventListener('click', likeFunction);
 
+
 // Обработчик создания новой карты, кнопка SUBMIT
 formNewCard.addEventListener('submit', handleNewCardSubmit);
 
+
 // Обработчик открытия модальных окон
-document.querySelector('.page__content').addEventListener('click', handlePopupButtonClick);
+pageContent.addEventListener('click', handlePopupButtonClick);

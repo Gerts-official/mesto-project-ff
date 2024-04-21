@@ -1,37 +1,56 @@
+// DOM
+export const pageContent = document.querySelector('.page__content');
+
+
+// Функция-обработчик открытия попапов по клику
+export function handlePopupButtonClick(evt) {
+    const targetClick = evt.target;
+    if (targetClick.classList.contains('profile__edit-button')) {
+        openPopup('edit');
+    } else if (targetClick.classList.contains('profile__add-button')) {
+        openPopup('new-card');
+    } else if (targetClick.classList.contains('card__image')) {
+        cardScale(evt);
+    }
+}
+
+
 // Функция открытия модального окна 
-export function openPopup(popupType) {
+export function openPopup(popupType, imageData) {
     const popup = document.querySelector(`.popup_type_${popupType}`);
     popup.classList.add('popup_is-opened');
 
+    if(imageData) {
+        const popupImageLink = popup.querySelector('.popup__image');
+        const popupImageCaption = popup.querySelector('.popup__caption');
+
+        popupImageLink.src = imageData.link;
+        popupImageCaption.textContent = imageData.caption;
+    }
 
     // Активируем все слушатели по закрытию
     activateClosingEventListeners();
 }
+
+
+// Функция открытия изображения карточки
+function cardScale(evt) {
+    const currentCard = evt.target.parentNode;
+    const currentCardLink = currentCard.querySelector('.card__image').src;
+    const currentCardCaption = currentCard.querySelector('.card__title').textContent;
+
+    openPopup('image', {link: currentCardLink, caption: currentCardCaption});
+}
+
 
 // Функция закрытия модального окна 
  export function closePopup() {
     const openedPopup = document.querySelector('.popup.popup_is-opened');
     openedPopup.classList.remove('popup_is-opened');
 
-
-    // Снимаем все слушатели по закрытию
-    document.querySelector('.page__content').removeEventListener('click', handlePopupCloseButtonClick);
-    document.removeEventListener('keydown', handleEscClose);
-    document.removeEventListener('click', handleOverlayClose);
-}
-
-// Функция-обработчик нажатия клавиши Esc
-function handleEscClose(evt) {
-    if (evt.key === 'Escape') {
-        closePopup();
-    }
-}
-
-// Функция-обработчик закрытия по клику на оверлей
-function handleOverlayClose(evt) {
-    if (evt.target.classList.contains('popup')) {
-        closePopup();
-    }
+    // Деактивируем все слушатели по закрытию
+    deactivateClosingEventListeners();
+   
 }
 
 
@@ -42,37 +61,34 @@ function handlePopupCloseButtonClick(evt) {
     }
 }
 
-// Функция-обработчик открытия попапа по клику
-export function handlePopupButtonClick(evt) {
-    const targetClick = evt.target;
-    if (targetClick.classList.contains('profile__edit-button')) {
-        openPopup('edit');
-    } else if (targetClick.classList.contains('profile__add-button')) {
-        openPopup('new-card');
-    } else if (targetClick.classList.contains('card__image')) {
-        console.log(evt.target);
-        cardScale(evt);
+
+// Функция-обработчик нажатия клавиши Esc
+function handleEscClose(evt) {
+    if (evt.key === 'Escape') {
+        closePopup();
     }
 }
 
-function cardScale(evt) {
-    const popupImage = document.querySelector('.popup_type_image');
-    const popupImageLink = popupImage.querySelector('.popup__image');
-    const popupImageCaption = popupImage.querySelector('.popup__caption');
-    const currentCard = evt.target.parentNode;
 
-    const currentCardLink = currentCard.querySelector('.card__image').src;
-    const currentCardCaption = currentCard.querySelector('.card__title').textContent;
-
-    popupImageLink.src = currentCardLink;
-    popupImageCaption.textContent = currentCardCaption;
-    popupImage.classList.add('popup_is-opened');
-    activateClosingEventListeners();
+// Функция-обработчик закрытия по клику на оверлей
+function handleOverlayClose(evt) {
+    if (evt.target.classList.contains('popup')) {
+        closePopup();
+    }
 }
 
 
-export function activateClosingEventListeners() {
-    document.querySelector('.page__content').addEventListener('click', handlePopupCloseButtonClick);
+// Функция активации группы слушателей
+function activateClosingEventListeners() {
+    pageContent.addEventListener('click', handlePopupCloseButtonClick);
     document.addEventListener('keydown', handleEscClose);
     document.addEventListener('click', handleOverlayClose);
+}
+
+
+ // Функция деактивации группы слушателей 
+ function deactivateClosingEventListeners(){
+    pageContent.removeEventListener('click', handlePopupCloseButtonClick);
+    document.removeEventListener('keydown', handleEscClose);
+    document.removeEventListener('click', handleOverlayClose);
 }

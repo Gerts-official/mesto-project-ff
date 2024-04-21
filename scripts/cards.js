@@ -32,6 +32,7 @@ export function deleteCard(cardElement) {
   cardElement.remove();
 }
 
+
 // Функция - обработчик лайка карточки 
 export function likeFunction(evt) {
   evt.target.classList.toggle('card__like-button_is-active');
