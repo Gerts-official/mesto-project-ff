@@ -20,12 +20,21 @@ export function openPopup(popupType, imageData) {
     const popup = document.querySelector(`.popup_type_${popupType}`);
     popup.classList.add('popup_is-opened');
 
-    if(imageData) {
-        const popupImageLink = popup.querySelector('.popup__image');
-        const popupImageCaption = popup.querySelector('.popup__caption');
+    if('edit') {
+        const profileInputName = document.querySelector('.popup__input_type_name');
+        const profileInputJub = document.querySelector('.popup__input_type_description');
+        const profileName = document.querySelector('.profile__title').textContent;
+        const profileJob = document.querySelector('.profile__description').textContent;
+        profileInputName.value = profileName;
+        profileInputJub.value = profileJob;
 
-        popupImageLink.src = imageData.link;
-        popupImageCaption.textContent = imageData.caption;
+        
+        }else if(imageData) {
+            const popupImageLink = popup.querySelector('.popup__image');
+            const popupImageCaption = popup.querySelector('.popup__caption');
+
+            popupImageLink.src = imageData.link;
+            popupImageCaption.textContent = imageData.caption;
     }
 
     // Активируем все слушатели по закрытию

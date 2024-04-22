@@ -25,15 +25,3 @@ export const initialCards = [
       link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
     }
 ];
-
-
-// Функция - обработчик удаления карточки 
-export function deleteCard(cardElement) {
-  cardElement.remove();
-}
-
-
-// Функция - обработчик лайка карточки 
-export function likeFunction(evt) {
-  evt.target.classList.toggle('card__like-button_is-active');
-}

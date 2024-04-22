@@ -1,39 +1,15 @@
 // Import CSS
 import '../pages/index.css';
-// Import cards.js
-import { initialCards, deleteCard, likeFunction } from '../scripts/cards.js';
+// Import card.js
+import { deleteCard, likeCard, createCard } from '../scripts/card.js';
 // Import modal.js
 import { handlePopupButtonClick, closePopup, pageContent } from '../scripts/modal.js';
 
 
 // DOM узлы
-const cardTemplate = document.querySelector('#card-template').content; 
-const cardList =  document.querySelector('.places__list');
 const formNewCard = document.querySelector('.popup_type_new-card');
 const formEditProfile = document.querySelector('.popup_type_edit');
-
-
-// Функция создания карточек
-function createCard(item, deleteCardCallback) {
-    const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
-    cardElement.querySelector('.card__image').src = item.link;
-    cardElement.querySelector('.card__image').alt = 'На картинке изображено: ' + item.name;
-    cardElement.querySelector('.card__title').textContent = item.name;
-
-    const deleteCardButton = cardElement.querySelector('.card__delete-button');
-    deleteCardButton.addEventListener('click', function() {
-        deleteCardCallback(cardElement);
-    });
-
-    return cardElement;
-}
-
-
-// Функция создания шести карточек при загрузке страницы
-initialCards.forEach(function(item) {
-    const card = createCard(item, deleteCard);
-    cardList.append(card);
-});
+const cardList =  document.querySelector('.places__list');
 
 
 // Функция - обработчик редактирования профайла
@@ -47,8 +23,6 @@ function handleFormSubmit(evt) {
     
     profileName.textContent = profileInputName.value;
     profileJob.textContent = profileInputJub.value;
-    profileInputName.value = '';
-    profileInputJub.value = '';
     closePopup();
 }
 
@@ -64,7 +38,7 @@ function handleNewCardSubmit(evt) {
         name: formInputName.value
     }
   
-    const newCardElement = createCard(newCardData, deleteCard);
+    const newCardElement = createCard(newCardData, deleteCard, likeCard);
     cardList.prepend(newCardElement);
     formInputLink.value = '';
     formInputName.value = '';
@@ -74,12 +48,11 @@ function handleNewCardSubmit(evt) {
 }
 
 
+
+
 // Обработчик редактирования профиля, кнопка SUBMIT
 formEditProfile.addEventListener('submit', handleFormSubmit);
 
-
-// Обработчик лайка 
-cardList.addEventListener('click', likeFunction);
 
 
 // Обработчик создания новой карты, кнопка SUBMIT
