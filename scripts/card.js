@@ -1,23 +1,23 @@
-// Import cards.js
-import { initialCards } from './cards.js';
-
-// DOM
-const cardList =  document.querySelector('.places__list');
-
-
 // Функция создания карточек
-export function createCard(item, deleteCardCallback, likeCardCallback) {
+export function createCard(item, deleteCardCallback, likeCardCallback, openCardCallback) {
     const cardTemplate = document.querySelector('#card-template').content; 
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
-    cardElement.querySelector('.card__image').src = item.link;
-    cardElement.querySelector('.card__image').alt = 'На картинке изображено: ' + item.name;
-    cardElement.querySelector('.card__title').textContent = item.name;
+    // Объект вновь созданной карты 
+    const cardData = {
+        name: cardElement.querySelector('.card__title'),
+        link: cardElement.querySelector('.card__image'),
+        altText: cardElement.querySelector('.card__image')
+    }
+    // Наполняем новую карту данными из cards.js
+    cardData.name.textContent = item.name;
+    cardData.link.src = item.link;
+    cardData.altText.alt = 'На картинке изображено: ' + item.name;
+
 
     // Вешаем слушатель на кнопку удаления карты
     const deleteCardButton = cardElement.querySelector('.card__delete-button');
     deleteCardButton.addEventListener('click', function() {
         deleteCardCallback(cardElement);
-        console.log(cardElement);
     });
 
     // Вешаем слушатель на кнопку лайка карты
@@ -26,15 +26,14 @@ export function createCard(item, deleteCardCallback, likeCardCallback) {
         likeCardCallback(likeButton);
     } )
 
+    // Вешаем слушатель изображение для увеличения 
+    cardData.link.addEventListener('click', function(){
+        openCardCallback(cardData.name, cardData.link);
+    })
+
+    // Возвращаем готовую карту для последующей вставки
     return cardElement;
 }
-
-// Функция создания шести карточек при загрузке страницы
-initialCards.forEach(function(item) {
-    const card = createCard(item, deleteCard, likeCard);
-    cardList.append(card);
-});
-
 
 
 // Функция - обработчик удаления карточки 
