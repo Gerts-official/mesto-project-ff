@@ -1,11 +1,12 @@
 // Import CSS
-import '../pages/index.css';
+import './pages/index.css';
 // Import cards.js
-import { initialCards } from '../scripts/cards.js';
+import { initialCards } from './scripts/cards.js';
 // Import card.js
-import { deleteCard, likeCard, createCard } from '../scripts/card.js';
+import { deleteCard, likeCard, createCard } from './scripts/card.js';
 // Import modal.js
-import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from '../scripts/modal.js';
+import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
+
 
 
 // DOM узлы
@@ -41,6 +42,7 @@ function handleFormSubmit(evt) {
     deactivateClosingEventListeners();
 }
 
+
 // Функция-обработчик увеличения изображения по клику
 function openScalePopup(name, link) {
     const popup = document.querySelector('.popup_type_image');
@@ -75,12 +77,14 @@ function handleNewCardSubmit(evt) {
     deactivateClosingEventListeners();
 }
 
+
 // Функция создания шести карточек при загрузке страницы
 initialCards.forEach(function(item) {
     const cardList =  document.querySelector('.places__list');
     const card = createCard(item, deleteCard, likeCard, openScalePopup );
     cardList.append(card);
 });
+
 
 // Функция открытия формы добавления новой карты
 function openAddNewCardPopup(){
