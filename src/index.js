@@ -9,7 +9,7 @@ import { openPopup, closePopup, activateClosingEventListeners, deactivateClosing
 
 
 
-// DOM узлы
+// DOM nodes
 const formNewCard = document.querySelector('.popup_type_new-card');
 const cardList =  document.querySelector('.places__list');
 
@@ -22,7 +22,7 @@ const inputEditProfileJob = formEditProfile.querySelector('.popup__input_type_de
 
 
 
-// Функция-обработчик открытия формы редактирования профайла
+// Handler function for opening the profile editing form
 function openEditProfilePopup(){
 
     inputEditProfileName.value = profileName.textContent;
@@ -31,7 +31,7 @@ function openEditProfilePopup(){
 }
 
 
-// Функция - обработчик редактирования профайла
+// Handler function for editing the profile
 function handleFormSubmit(evt) {
     evt.preventDefault(); 
         
@@ -43,7 +43,7 @@ function handleFormSubmit(evt) {
 }
 
 
-// Функция-обработчик увеличения изображения по клику
+// Handler function for opening an image popup by click
 function openScalePopup(name, link) {
     const popup = document.querySelector('.popup_type_image');
     popup.classList.add('popup_is-opened');
@@ -57,7 +57,7 @@ function openScalePopup(name, link) {
 }
 
 
-// Функция создания карточки
+// Function to create a new card
 function handleNewCardSubmit(evt) { 
     evt.preventDefault();
     let formInputLink = formNewCard.querySelector('.popup__input_type_url');
@@ -78,7 +78,7 @@ function handleNewCardSubmit(evt) {
 }
 
 
-// Функция создания шести карточек при загрузке страницы
+// Function to create six cards when the page loads
 initialCards.forEach(function(item) {
     const cardList =  document.querySelector('.places__list');
     const card = createCard(item, deleteCard, likeCard, openScalePopup );
@@ -86,30 +86,26 @@ initialCards.forEach(function(item) {
 });
 
 
-// Функция открытия формы добавления новой карты
+// Function to open the form for adding a new card
 function openAddNewCardPopup(){
     openPopup(formNewCard);
 }
 
 
 // <<<<<< EVENT LISTENERS SECTION >>>>>>
-// Обработчик открытия формы редакитрования профайла 
+// Handler for opening the profile editing form 
 document.querySelector('.profile__edit-button').addEventListener('click', openEditProfilePopup);
 
-// Обработчик кнопки SUBMIT в форме редактирования профиля
+// Handler for the SUBMIT button in the profile editing form
 formEditProfile.addEventListener('submit', handleFormSubmit);
 
 
-// Обработчик открытия формы добавления новой карты
+// Handler for opening the form for adding a new card
 document.querySelector('.profile__add-button').addEventListener('click', openAddNewCardPopup);
 
 
-// Обработчик создания новой карты, кнопка SUBMIT
+// Handler for creating a new card, SUBMIT button
 formNewCard.addEventListener('submit', handleNewCardSubmit);
 
-// Деактивируем все слушатели закрытия, повешанные на документе 
+// Deactivate all closing event listeners attached to the document 
 deactivateClosingEventListeners();
-
-
-
-

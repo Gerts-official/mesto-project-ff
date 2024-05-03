@@ -9,7 +9,7 @@ const newCardPopup = document.querySelector('.popup_type_new-card');
 
 
 
-// Функция-обработчик открытия модального окна 
+// Hande-function to open popup. 
 export function openPopup(popupElement) {
     popupElement.classList.add('popup_is-opened');
     activateClosingEventListeners();
@@ -17,7 +17,7 @@ export function openPopup(popupElement) {
 };
 
 
-// Функция-обработчик закрытия модального окна 
+//Hande-function to close popup.
 export function closePopup(popupElement) {
     popupElement.classList.remove('popup_is-opened');
     deactivateClosingEventListeners();
@@ -25,7 +25,7 @@ export function closePopup(popupElement) {
 }
 
 
-// Функция-обработчик клика по кнопке закрытия попапа
+//  Handle-function closing with the close-button.
 function handlePopupCloseButtonClick(evt) {
     if (evt.target.classList.contains('popup__close')) {
         closePopup(document.querySelector('.popup_is-opened'));
@@ -33,7 +33,7 @@ function handlePopupCloseButtonClick(evt) {
 }
 
 
-// Функция-обработчик нажатия клавиши Esc
+// Handle-function closing with the Esc button
 function handleEscClose(evt) {
     if (evt.key === 'Escape') {
         closePopup(document.querySelector('.popup_is-opened'));
@@ -41,7 +41,7 @@ function handleEscClose(evt) {
 }
 
 
-// Функция-обработчик закрытия по клику на оверлей
+// Handle-function for closing on overlay click.
 function handleOverlayClose(evt) {
     if (evt.target.classList.contains('popup')){
         closePopup(document.querySelector('.popup_is-opened'));
@@ -49,7 +49,7 @@ function handleOverlayClose(evt) {
 }
 
 
-// Функция активации группы слушателей 
+// Activate group of listeneres function. 
 export function activateClosingEventListeners() {
     document.addEventListener('click', handlePopupCloseButtonClick);
     document.addEventListener('keydown', handleEscClose); 
@@ -57,7 +57,7 @@ export function activateClosingEventListeners() {
 }
 
 
-// Функция деактивации группы слушателей 
+// Deactivate group of listeneres function. 
 export function deactivateClosingEventListeners() {
     document.removeEventListener('click', handlePopupCloseButtonClick);
     document.removeEventListener('keydown', handleEscClose); 
