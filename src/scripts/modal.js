@@ -1,3 +1,6 @@
+// Import validation.js
+import {enableValidation} from './validation';
+
 // DOM
 const profileEditButton = document.querySelector('.profile__edit-button');
 const newCardAddButton = document.querySelector('.profile__add-button');
@@ -10,6 +13,7 @@ const newCardPopup = document.querySelector('.popup_type_new-card');
 export function openPopup(popupElement) {
     popupElement.classList.add('popup_is-opened');
     activateClosingEventListeners();
+    enableValidation();
 };
 
 

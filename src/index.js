@@ -109,3 +109,7 @@ formNewCard.addEventListener('submit', handleNewCardSubmit);
 
 // Деактивируем все слушатели закрытия, повешанные на документе 
 deactivateClosingEventListeners();
+
+
+
+

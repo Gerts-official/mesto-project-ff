@@ -1,0 +1,24 @@
+
+.popup__input-error{
+    border-block-color: red;
+} 
+
+.popup__input-error_active {
+    color: red;
+}
+
+.button_inactive {
+    pointer-events: none;
+    cursor: default;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #d5cdcd;
+    color: #d5cdcd;
+}
+
+
+
+
+
+
+
+
