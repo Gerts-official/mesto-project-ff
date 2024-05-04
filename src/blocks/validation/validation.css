@@ -1,13 +1,13 @@
 
-.popup__input-error{
+.popup__input_type_error{
     border-block-color: red;
 } 
 
-.popup__input-error_active {
+.popup__error_visible {
     color: red;
 }
 
-.button_inactive {
+.popup__button_disabled {
     pointer-events: none;
     cursor: default;
     background: rgba(255, 255, 255, 0.8);

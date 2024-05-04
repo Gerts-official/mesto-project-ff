@@ -6,8 +6,19 @@ import { initialCards } from './scripts/cards.js';
 import { deleteCard, likeCard, createCard } from './scripts/card.js';
 // Import modal.js
 import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
+// Import validation.js
+import {enableValidation, hideInputError} from './scripts/validation.js';
 
-
+// *** VALIDATION CONFIG ***
+export const validationConfig = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+  }
+// ***
 
 // DOM nodes
 const formNewCard = document.querySelector('.popup_type_new-card');
@@ -109,3 +120,6 @@ formNewCard.addEventListener('submit', handleNewCardSubmit);
 
 // Deactivate all closing event listeners attached to the document 
 deactivateClosingEventListeners();
+
+// Activate validation for all the forms
+enableValidation(validationConfig);
