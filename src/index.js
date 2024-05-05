@@ -26,6 +26,7 @@ const cardList =  document.querySelector('.places__list');
 const formEditProfile = document.querySelector('.popup_type_edit');
 const profileName = document.querySelector('.profile__title');
 const profileJob = document.querySelector('.profile__description');
+const profileImage = document.querySelector('.profile__image');
 
 const inputEditProfileName = formEditProfile.querySelector('.popup__input_type_name');
 const inputEditProfileJob = formEditProfile.querySelector('.popup__input_type_description');
@@ -91,11 +92,61 @@ function handleNewCardSubmit(evt) {
 
 
 // Function to create six cards when the page loads
-initialCards.forEach(function(item) {
-    const cardList =  document.querySelector('.places__list');
-    const card = createCard(item, deleteCard, likeCard, openScalePopup );
-    cardList.append(card);
-});
+// initialCards.forEach(function(item) {
+//     const cardList =  document.querySelector('.places__list');
+//     const card = createCard(item, deleteCard, likeCard, openScalePopup );
+//     cardList.append(card);
+// });
+
+function fetchUserData() {
+    return fetch('https://nomoreparties.co/v1/wff-cohort-13/users/me', {
+        headers: {
+            authorization: '70d4b308-094b-447b-90dc-851238a69354'
+        }
+    })
+    .then(response => {
+        if(!response.ok) {
+            throw new Error('Ошибка загрузки карточек с сервера');
+        }
+        return response.json();
+    })
+}
+
+
+function fetchCards (){
+    return fetch('https://nomoreparties.co/v1/wff-cohort-13/cards', {
+        headers: {
+            authorization: '70d4b308-094b-447b-90dc-851238a69354'
+        }
+    })
+    .then(response => {
+        if(!response.ok) {
+            throw new Error('Ошибка загрузки карточек с сервера');
+        }
+        return response.json();
+    })
+}
+
+Promise.all([fetchUserData(), fetchCards()])
+    .then(results => {
+        
+        const profileData = results[0];
+        const cardsData = results[1];
+
+        console.log(profileData);
+
+
+        profileName.textContent = profileData.name;
+        profileJob.textContent = profileData.about;
+        profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
+
+
+
+        cardsData.forEach(cardData => {
+        const card = createCard(cardData, deleteCard, likeCard, openScalePopup);
+        cardList.append(card);
+        })
+    })
 
 
 // Function to open the form for adding a new card
