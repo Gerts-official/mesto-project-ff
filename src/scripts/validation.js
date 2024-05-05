@@ -67,8 +67,8 @@ const setEventListeners = (formElement, config) => {
 };
 
 // Enable validation on form level.
-export const enableValidation = (validationConfig) => {
-    const formList = Array.from(document.querySelectorAll(validationConfig.formSelector));
+export const enableValidation = (config) => {
+    const formList = Array.from(document.querySelectorAll(config.formSelector));
 
     // Pevent page reload in the submit event.
     formList.forEach((formElement) => {
@@ -79,19 +79,22 @@ export const enableValidation = (validationConfig) => {
         // Prevent enter down if the form isn't valid.
         formElement.addEventListener('keydown', (evt) => {
             if (evt.key === 'Enter') {
-                console.log(formElement.checkValidity());
                 if (!formElement.checkValidity()){
                     evt.preventDefault();
                 }
             }
         })
-        setEventListeners(formElement, validationConfig);
+        setEventListeners(formElement, config);
     });
 };
 
+// Clear up the error message from the previous session function.
+export const clearValidation = (profileForm, config) => {
+    const inputList = profileForm.querySelectorAll(config.inputSelector);
 
-// const clearValidation = (formElement, inputElement, config) => {
-
-// }
+    inputList.forEach((inputElement) => {
+        hideInputError(profileForm, inputElement, config)
+    })
+}
 
 
