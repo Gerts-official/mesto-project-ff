@@ -38,9 +38,9 @@ const inputNewCardLink = formNewCard.querySelector('.popup__input_type_url');
 
 // Handler function for opening the profile editing form
 function openEditProfilePopup(){
+   
     inputEditProfileName.value = profileName.textContent;
     inputEditProfileJob.value = profileJob.textContent;
-
     openPopup(formEditProfile);
     clearValidation(formEditProfile, validationConfig);
 }
@@ -133,9 +133,6 @@ Promise.all([fetchUserData(), fetchCards()])
         const profileData = results[0];
         const cardsData = results[1];
 
-        console.log(profileData);
-
-
         profileName.textContent = profileData.name;
         profileJob.textContent = profileData.about;
         profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
@@ -157,7 +154,6 @@ function openAddNewCardPopup(){
     openPopup(formNewCard);
     clearValidation(formNewCard, validationConfig);
 }
-
 
 // <<<<<< EVENT LISTENERS SECTION >>>>>>
 // Handler for opening the profile editing form 

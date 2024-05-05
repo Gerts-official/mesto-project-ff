@@ -60,6 +60,7 @@ const setEventListeners = (formElement, config) => {
 
     inputList.forEach((inputElement) => {
         inputElement.addEventListener('input', () => {
+            console.log('checking');
             isValid(formElement, inputElement, config);
             toggleButtonState(inputList, buttonElement, config);
         });
@@ -90,7 +91,10 @@ export const enableValidation = (config) => {
 
 // Clear up the error message from the previous session function.
 export const clearValidation = (profileForm, config) => {
-    const inputList = profileForm.querySelectorAll(config.inputSelector);
+    const inputList = Array.from(profileForm.querySelectorAll(config.inputSelector));
+    const buttonElement = profileForm.querySelector(config.submitButtonSelector);
+
+    buttonElement.classList.add(config.inactiveButtonClass);
 
     inputList.forEach((inputElement) => {
         hideInputError(profileForm, inputElement, config)
