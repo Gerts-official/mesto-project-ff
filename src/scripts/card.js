@@ -1,5 +1,8 @@
+import {deleteFromTheServer} from './api.js';
+
+
 // Function to create cards 
-export function createCard(item, deleteCardCallback, likeCardCallback, openCardCallback) {
+export function createCard(newCardData, deleteCardCallback, likeCardCallback, openCardCallback) {
     const cardTemplate = document.querySelector('#card-template').content; 
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
 
@@ -7,18 +10,19 @@ export function createCard(item, deleteCardCallback, likeCardCallback, openCardC
     const cardData = {
         name: cardElement.querySelector('.card__title'),
         link: cardElement.querySelector('.card__image'),
-        altText: cardElement.querySelector('.card__image')
+        altText: cardElement.querySelector('.card__image'),
     }
 
     // Fill the card with data from cards.js
-    cardData.name.textContent = item.name;
-    cardData.link.src = item.link;
-    cardData.altText.alt = 'На картинке изображено: ' + item.name;
+    cardData.name.textContent = newCardData.name;
+    cardData.link.src = newCardData.link;
+    cardData.altText.alt = 'На картинке изображено: ' + newCardData.name;
 
     // Attach an event listener to the card deletion button.
     const deleteCardButton = cardElement.querySelector('.card__delete-button');
     deleteCardButton.addEventListener('click', function() {
-        deleteCardCallback(cardElement);
+        console.log(newCardData);
+        deleteCardCallback(cardElement, newCardData._id);
     });
 
     // Attach an event listener to the card like button.
@@ -36,10 +40,19 @@ export function createCard(item, deleteCardCallback, likeCardCallback, openCardC
     return cardElement;
 }
 
+export function hideDeleteButton (card, cardData, ID){
+    if(cardData.owner._id !== ID) {
+        const noRightsDeleteButton = card.querySelector('.card__delete-button');
+        noRightsDeleteButton.classList.add('card__delete-button-incative');
+    }
+}
+
 
 // Handle function to delete card.
-export function deleteCard(cardElement) {
+export function deleteCard(cardElement, id) {
     cardElement.remove();
+    deleteFromTheServer(id);
+
   }
   
   

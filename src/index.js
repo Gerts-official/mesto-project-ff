@@ -3,11 +3,13 @@ import './pages/index.css';
 // Import cards.js
 import { initialCards } from './scripts/cards.js';
 // Import card.js
-import { deleteCard, likeCard, createCard } from './scripts/card.js';
+import { deleteCard, likeCard, createCard, hideDeleteButton} from './scripts/card.js';
 // Import modal.js
 import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
 // Import validation.js
 import {enableValidation, clearValidation} from './scripts/validation.js';
+// Import api.js
+import {getUserData, getInitialCardsToLoad, patchChangedPrifileData, postNewCard} from './scripts/api.js';
 
 // *** VALIDATION CONFIG ***
 export const validationConfig = {
@@ -47,12 +49,17 @@ function openEditProfilePopup(){
 
 
 // Handler function for editing the profile
-function handleFormSubmit(evt) {
+function submitEditProfileButton(evt) {
     evt.preventDefault(); 
-        
-    profileName.textContent = inputEditProfileName.value;
-    profileJob.textContent = inputEditProfileJob.value;
 
+    const newName = inputEditProfileName.value;
+    const newAbout = inputEditProfileJob.value;
+        
+    profileName.textContent = newName;
+    profileJob.textContent = newAbout;
+
+    
+    patchChangedPrifileData(newName, newAbout);
     closePopup(formEditProfile);
     deactivateClosingEventListeners();
 }
@@ -73,77 +80,45 @@ function openScalePopup(name, link) {
 
 
 // Function to create a new card
-function handleNewCardSubmit(evt) { 
+async function handleNewCardSubmit(evt) { 
     evt.preventDefault();
     
-    const newCardData = {
-        link: inputNewCardLink.value,
-        name: inputNewCardName.value
-    }
-  
-    const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
-    cardList.prepend(newCardElement);
-    inputNewCardLink.value = '';
-    inputNewCardName.value = '';
+    const newCardName = inputNewCardName.value;
+    const newCardLink = inputNewCardLink.value;
 
-    closePopup(formNewCard);
-    deactivateClosingEventListeners();
+    try {
+        const newCardData = await postNewCard(newCardName, newCardLink);
+    
+        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
+        cardList.prepend(newCardElement);
+        inputNewCardLink.value = '';
+        inputNewCardName.value = '';
+
+        closePopup(formNewCard);
+        deactivateClosingEventListeners();
+    } catch (error) {
+        console.error('Failed to handle new card submission:', error);
+      } 
 }
 
 
-// Function to create six cards when the page loads
-// initialCards.forEach(function(item) {
-//     const cardList =  document.querySelector('.places__list');
-//     const card = createCard(item, deleteCard, likeCard, openScalePopup );
-//     cardList.append(card);
-// });
-
-function fetchUserData() {
-    return fetch('https://nomoreparties.co/v1/wff-cohort-13/users/me', {
-        headers: {
-            authorization: '70d4b308-094b-447b-90dc-851238a69354'
-        }
-    })
-    .then(response => {
-        if(!response.ok) {
-            throw new Error('Ошибка загрузки карточек с сервера');
-        }
-        return response.json();
-    })
-}
-
-
-function fetchCards (){
-    return fetch('https://nomoreparties.co/v1/wff-cohort-13/cards', {
-        headers: {
-            authorization: '70d4b308-094b-447b-90dc-851238a69354'
-        }
-    })
-    .then(response => {
-        if(!response.ok) {
-            throw new Error('Ошибка загрузки карточек с сервера');
-        }
-        return response.json();
-    })
-}
-
-Promise.all([fetchUserData(), fetchCards()])
+Promise.all([getUserData(), getInitialCardsToLoad()])
     .then(results => {
-        
         const profileData = results[0];
         const cardsData = results[1];
+
+        const profileID = profileData._id;
 
         profileName.textContent = profileData.name;
         profileJob.textContent = profileData.about;
         profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
-
-
-
+        
         cardsData.forEach(cardData => {
-        const card = createCard(cardData, deleteCard, likeCard, openScalePopup);
-        cardList.append(card);
-        })
-    })
+            const card = createCard(cardData, deleteCard, likeCard, openScalePopup);
+            cardList.append(card);
+            hideDeleteButton(card, cardData, profileID);
+        });
+    });
 
 
 // Function to open the form for adding a new card
@@ -155,12 +130,13 @@ function openAddNewCardPopup(){
     clearValidation(formNewCard, validationConfig);
 }
 
+
 // <<<<<< EVENT LISTENERS SECTION >>>>>>
 // Handler for opening the profile editing form 
 document.querySelector('.profile__edit-button').addEventListener('click', openEditProfilePopup);
 
 // Handler for the SUBMIT button in the profile editing form
-formEditProfile.addEventListener('submit', handleFormSubmit);
+formEditProfile.addEventListener('submit', submitEditProfileButton);
 
 // Handler for opening the form for adding a new card
 document.querySelector('.profile__add-button').addEventListener('click', openAddNewCardPopup);
@@ -174,3 +150,8 @@ deactivateClosingEventListeners();
 
 // Activate validation for all the forms
 enableValidation(validationConfig);
+
+
+
+
+
