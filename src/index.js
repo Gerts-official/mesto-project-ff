@@ -8,7 +8,7 @@ import { openPopup, closePopup, activateClosingEventListeners, deactivateClosing
 // Import validation.js
 import {enableValidation, clearValidation} from './scripts/validation.js';
 // Import api.js
-import {getUserData, getInitialCardsToLoad, patchChangedPrifileData, postNewCard} from './scripts/api.js';
+import {getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard} from './scripts/api.js';
 
 // *** VALIDATION CONFIG ***
 export const validationConfig = {
@@ -53,19 +53,21 @@ function openEditProfilePopup(){
 
 
 // Handler function for editing the profile
-function submitEditProfileButton(evt) {
+async function submitEditProfileButton(evt) {
     evt.preventDefault(); 
 
     const newName = inputEditProfileName.value;
     const newAbout = inputEditProfileJob.value;
         
-    profileName.textContent = newName;
-    profileJob.textContent = newAbout;
-
-    
-    patchChangedPrifileData(newName, newAbout);
-    closePopup(formEditProfile);
-    deactivateClosingEventListeners();
+    try {
+        await patchChangedProfileData(newName, newAbout);
+        profileName.textContent = newName;
+        profileJob.textContent = newAbout;
+        closePopup(formEditProfile);
+        deactivateClosingEventListeners();
+    } catch (error) {
+        console.error ('Failed to update profile:', error);
+    }
 }
 
 
@@ -82,28 +84,31 @@ function openScalePopup(name, link) {
     activateClosingEventListeners();
 }
 
-
-// Function to create a new card
+// Function to create a new card - SUBMIT
 async function handleNewCardSubmit(evt) { 
     evt.preventDefault();
-    
     const newCardName = inputNewCardName.value;
     const newCardLink = inputNewCardLink.value;
-
-    try {
-        const newCardData = await postNewCard(newCardName, newCardLink);
     
+    
+    try {
+        let newCardData = await postNewCard(newCardName, newCardLink);
+        newCardData.likes = Array.from(newCardData.likes) || [];
+        
+        console.log(newCardData);
         const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
         cardList.prepend(newCardElement);
+        
+        closePopup(formNewCard);
         inputNewCardLink.value = '';
         inputNewCardName.value = '';
-
-        closePopup(formNewCard);
         deactivateClosingEventListeners();
+        
     } catch (error) {
-        console.error('Failed to handle new card submission:', error);
-      } 
+        console.error('Failed to add card:', error);
+    } 
 }
+
 
 
 Promise.all([getUserData(), getInitialCardsToLoad()])
@@ -121,7 +126,6 @@ Promise.all([getUserData(), getInitialCardsToLoad()])
             const card = createCard(profileData, cardData, deleteCard, likeCard, openScalePopup);
             cardList.append(card);
             hideDeleteButton(card, cardData, profileID);
-            // updateLikeCount(card, cardData);
         });
     });
 
@@ -133,11 +137,6 @@ function openAddNewCardPopup(){
 
     openPopup(formNewCard);
     clearValidation(formNewCard, validationConfig);
-}
-
-// Likes update
-function checkForLikesUpdate () {
-
 }
 
 
@@ -158,16 +157,5 @@ formNewCard.addEventListener('submit', handleNewCardSubmit);
 deactivateClosingEventListeners();
 
 
-
-
 // Activate validation for all the forms
 enableValidation(validationConfig);
-
-
-
-
-
-
-
-
-

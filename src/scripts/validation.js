@@ -100,5 +100,3 @@ export const clearValidation = (profileForm, config) => {
         hideInputError(profileForm, inputElement, config)
     })
 }
-
-
