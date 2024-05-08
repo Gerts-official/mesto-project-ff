@@ -1,9 +1,8 @@
+// ========================================================================================== HEADER ZONE START
 // Import CSS
 import './pages/index.css';
-// Import cards.js
-import { initialCards } from './scripts/cards.js';
 // Import card.js
-import { deleteCard, likeCard, createCard, hideDeleteButton} from './scripts/card.js';
+import { deleteCard, likeCard, createCard, hideDeleteButton, updateLikeCount} from './scripts/card.js';
 // Import modal.js
 import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
 // Import validation.js
@@ -30,14 +29,19 @@ const profileName = document.querySelector('.profile__title');
 const profileJob = document.querySelector('.profile__description');
 const profileImage = document.querySelector('.profile__image');
 
+
+const confirmDeleteCardForm = document.querySelector('.popup_type_delete');
+const deleteSubmitButton = confirmDeleteCardForm.querySelector('.popup__button')
+
 const inputEditProfileName = formEditProfile.querySelector('.popup__input_type_name');
 const inputEditProfileJob = formEditProfile.querySelector('.popup__input_type_description');
 
 const inputNewCardName = formNewCard.querySelector('.popup__input_type_card-name');
 const inputNewCardLink = formNewCard.querySelector('.popup__input_type_url');
+
     
 
-
+// ========================================================================================== MAIN ZONE START
 // Handler function for opening the profile editing form
 function openEditProfilePopup(){
    
@@ -114,9 +118,10 @@ Promise.all([getUserData(), getInitialCardsToLoad()])
         profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
         
         cardsData.forEach(cardData => {
-            const card = createCard(cardData, deleteCard, likeCard, openScalePopup);
+            const card = createCard(profileData, cardData, deleteCard, likeCard, openScalePopup);
             cardList.append(card);
             hideDeleteButton(card, cardData, profileID);
+            // updateLikeCount(card, cardData);
         });
     });
 
@@ -130,8 +135,13 @@ function openAddNewCardPopup(){
     clearValidation(formNewCard, validationConfig);
 }
 
+// Likes update
+function checkForLikesUpdate () {
 
-// <<<<<< EVENT LISTENERS SECTION >>>>>>
+}
+
+
+// ================================================================================ EVENT LISTENERS SECTION START 
 // Handler for opening the profile editing form 
 document.querySelector('.profile__edit-button').addEventListener('click', openEditProfilePopup);
 
@@ -148,8 +158,14 @@ formNewCard.addEventListener('submit', handleNewCardSubmit);
 deactivateClosingEventListeners();
 
 
+
+
 // Activate validation for all the forms
 enableValidation(validationConfig);
+
+
+
+
 
 
 

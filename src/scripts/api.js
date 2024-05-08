@@ -107,4 +107,35 @@ export function deleteFromTheServer(id) {
     });
 }
 
+// PATCH new like
+export function patchNewLike(cardData, profileData) {
+    // Получить массив лайков из cardData и добавить в него новый профиль
+     const updatedLikes = [profileData];
+    // console.log(updatedLikes);
+    
+    return fetch(`https://nomoreparties.co/v1/wff-cohort-13/cards/likes/${cardData._id}`, {
+        method: 'PUT', // Используйте метод PATCH для обновления данных
+        headers: {
+          authorization: '70d4b308-094b-447b-90dc-851238a69354',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          likes: profileData // Отправить обновленный массив лайков
+        })
+    })
+    .then(response => {
+        if(response.ok) {
+            console.log('Like added - SUCCESS')
+        } else {
+            throw new Error('Profile data update - FAILED')
+        }
+    })
+    .catch(error => {
+        console.error('Profile data update - FAILED', error);
+    })
+}
+
+
+
+
     
