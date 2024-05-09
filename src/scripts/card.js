@@ -3,10 +3,10 @@ import {openPopup, closePopup} from './modal.js';
 
 
 // Function to create cards 
-export function createCard(profileData, cardData, deleteCardCallback, likeCardCallback, openCardCallback) {
+export function createCard(cardData, deleteCardCallback, likeCardCallback, openCardCallback, profileData,) {
     const cardTemplate = document.querySelector('#card-template').content; 
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
-
+    console.log(cardData.link);
     // New card's object
     const cardDataToPut = {
         name: cardElement.querySelector('.card__title'),
@@ -15,11 +15,14 @@ export function createCard(profileData, cardData, deleteCardCallback, likeCardCa
         likeCount: cardElement.querySelector('.card__like-button-span')
     };
 
+    console.log(cardData.link);
+
     // Fill the card with data from cards.js
     cardDataToPut.name.textContent = cardData.name;
     cardDataToPut.link.src = cardData.link;
     cardDataToPut.altText.alt = 'На картинке изображено: ' + cardData.name;
-    cardDataToPut.likeCount.textContent = cardData.likes?.length || 0;
+    cardDataToPut.likeCount.textContent = Array.isArray(cardData.likes) ? cardData.likes.length : 0;
+
 
     // Attach an event listener to the card deletion button.
     const deleteCardButton = cardElement.querySelector('.card__delete-button');

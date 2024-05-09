@@ -2,7 +2,7 @@
 // Import CSS
 import './pages/index.css';
 // Import card.js
-import { deleteCard, likeCard, createCard, hideDeleteButton, updateLikeCount} from './scripts/card.js';
+import { deleteCard, likeCard, createCard, hideDeleteButton} from './scripts/card.js';
 // Import modal.js
 import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
 // Import validation.js
@@ -11,7 +11,7 @@ import {enableValidation, clearValidation} from './scripts/validation.js';
 import {getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard} from './scripts/api.js';
 
 // *** VALIDATION CONFIG ***
-export const validationConfig = {
+const validationConfig = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
     submitButtonSelector: '.popup__button',
@@ -90,15 +90,16 @@ async function handleNewCardSubmit(evt) {
     const newCardName = inputNewCardName.value;
     const newCardLink = inputNewCardLink.value;
     
-    
     try {
+        console.log('1');
         let newCardData = await postNewCard(newCardName, newCardLink);
-        newCardData.likes = Array.from(newCardData.likes) || [];
+        newCardData.likes = newCardData.likes || [];
         
         console.log(newCardData);
-        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
+        const  newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
+        console.log('3');
         cardList.prepend(newCardElement);
-        
+        console.log('4');
         closePopup(formNewCard);
         inputNewCardLink.value = '';
         inputNewCardName.value = '';
@@ -122,10 +123,10 @@ Promise.all([getUserData(), getInitialCardsToLoad()])
         profileJob.textContent = profileData.about;
         profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
         
-        cardsData.forEach(cardData => {
-            const card = createCard(profileData, cardData, deleteCard, likeCard, openScalePopup);
+        cardsData.forEach(newCardData => {
+            const card = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileData);
             cardList.append(card);
-            hideDeleteButton(card, cardData, profileID);
+            hideDeleteButton(card, newCardData, profileID);
         });
     });
 
