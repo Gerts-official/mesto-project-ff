@@ -53,6 +53,7 @@ const validationConfig = {
     errorClass: 'popup__error_visible'
 }
 
+
 // DOM nodes
 /**
  * DOM node for the "New Card" form.
@@ -60,17 +61,20 @@ const validationConfig = {
  */
 const formNewCard = document.querySelector('.popup_type_new-card');
 
+
 /**
  * DOM node for the card list container.
  * @type {HTMLElement}
  */
 const cardList = document.querySelector('.places__list');
 
+
 /**
  * DOM node for the "Edit Profile" form.
  * @type {HTMLElement}
  */
 const formEditProfile = document.querySelector('.popup_type_edit');
+
 
 /**
  * DOM node for the profile name element.
@@ -148,6 +152,10 @@ function openEditProfilePopup() {
 async function submitEditProfileButton(evt) {
     evt.preventDefault();
 
+    const submitButton = evt.currentTarget.querySelector('.popup__button');
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = 'Сохранение...';
+
     const newName = inputEditProfileName.value;
     const newAbout = inputEditProfileJob.value;
 
@@ -159,6 +167,8 @@ async function submitEditProfileButton(evt) {
         deactivateClosingEventListeners();
     } catch (error) {
         console.error('Failed to update profile:', error);
+    } finally {
+        submitButton.textContent = originalButtonText;
     }
 }
 
@@ -191,18 +201,27 @@ async function handleNewCardSubmit(evt) {
     const newCardName = inputNewCardName.value;
     const newCardLink = inputNewCardLink.value;
 
+    const submitButton = evt.currentTarget.querySelector('.popup__button');
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = 'Сохранение...';
+
     try {
         let newCardData = await postNewCard(newCardName, newCardLink);
         newCardData.likes = newCardData.likes || [];
 
         const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
         cardList.prepend(newCardElement);
+        
         closePopup(formNewCard);
         inputNewCardLink.value = '';
         inputNewCardName.value = '';
         deactivateClosingEventListeners();
+        
+
     } catch (error) {
         console.error('Failed to add card:', error);
+    } finally {
+        submitButton.textContent = originalButtonText;
     }
 }
 

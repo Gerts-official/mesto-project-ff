@@ -37,14 +37,12 @@ export const hideInputError = (formElement, inputElement, config) => {
 const isValid = (formElement, inputElement, config) => {
     if (inputElement.validity.patternMismatch) {
         inputElement.setCustomValidity(inputElement.dataset.errorMessage);
-        console.log(inputElement.dataset.errorMessage);
     } else {
         inputElement.setCustomValidity("");
     }
 
     if (!inputElement.validity.valid) {
         showInputError(formElement, inputElement, inputElement.validationMessage, config);
-        console.log(inputElement.validationMessage);
     } else {
         hideInputError(formElement, inputElement, config);
     }
@@ -91,7 +89,6 @@ const setEventListeners = (formElement, config) => {
 
     inputList.forEach((inputElement) => {
         inputElement.addEventListener('input', () => {
-            console.log('checking');
             isValid(formElement, inputElement, config);
             toggleButtonState(inputList, buttonElement, config);
         });

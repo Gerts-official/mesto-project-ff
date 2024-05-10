@@ -9,9 +9,6 @@ import { openPopup, closePopup } from './modal.js';
  * @returns {Object} An object containing references to the populated card elements.
  */
 function setupCardData(cardElement, cardData) {
-    console.log(typeof cardElement, cardElement);
-    debugger
-    // console.log(typeof cardData, cardData);
     const cardDataToPut = {
         name: cardElement.querySelector('.card__title'),
         link: cardElement.querySelector('.card__image'),
@@ -25,7 +22,6 @@ function setupCardData(cardElement, cardData) {
     cardDataToPut.likeCount.textContent = Array.isArray(cardData.likes) ? cardData.likes.length : 0;
 
     return cardDataToPut;
-    debugger
 }
 
 /**
