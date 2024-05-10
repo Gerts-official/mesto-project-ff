@@ -1,23 +1,8 @@
 // API CONSTANTS
-/**
- * The base URL for the API endpoint.
- * @type {string}
- */
 const BASE_URL = 'https://nomoreparties.co/v1/wff-cohort-13';
-
-/**
- * The authorization key required for making requests.
- * @type {string}
- */
 const AUTHORIZATION_KEY = '70d4b308-094b-447b-90dc-851238a69354';
 
 // Helper function to handle responses
-/**
- * Handles the response from the server.
- * @param {Response} response - The response object from the fetch API.
- * @returns {Promise<Object>} A Promise that resolves with the parsed JSON response.
- * @throws {Error} If the response is not successful, throws an error with the error message from the server.
- */
 const handleResponse = async (response) => {
     if (!response.ok) {
         const errorData = await response.json();
@@ -27,14 +12,6 @@ const handleResponse = async (response) => {
 };
 
 // Helper function to make API calls
-/**
- * Base implementation of an API request.
- * @param {string} uri - The partial path after the base URL.
- * @param {string} method - The HTTP request method (default is "GET").
- * @param {Object|null} data - The data to be sent with the request (default is null).
- * @returns {Promise<Object>} A Promise that resolves with the parsed JSON response.
- * @throws {Error} If the request fails, throws an error with the error message.
- */
 const makeRequest = async (uri, method = "GET", data = null) => {
     const options = {
         method,
@@ -57,53 +34,38 @@ const makeRequest = async (uri, method = "GET", data = null) => {
     }
 };
 
-// API methods
-/**
- * Retrieves the user's data from the server.
- * @returns {Promise<Object>} A Promise that resolves with the user's data.
- */
+//  ==================================================================================== API METHODS
+// Get the user's data from the server
 export const getUserData = () => makeRequest('users/me');
 
-/**
- * Retrieves the initial set of cards from the server.
- * @returns {Promise<Object>} A Promise that resolves with the initial set of cards.
- */
+// Get the initial set of cards from the server
 export const getInitialCardsToLoad = () => makeRequest('cards');
 
-/**
- * Updates the user's profile data on the server.
- * @param {string} name - The new name for the user's profile.
- * @param {string} about - The new about information for the user's profile.
- * @returns {Promise<Object>} A Promise that resolves with the updated user's data.
- */
+// Send the user's profile data to the server
 export const patchChangedProfileData = (name, about) => makeRequest('users/me', 'PATCH', { name, about });
 
-/**
- * Creates a new card on the server.
- * @param {string} name - The name of the new card.
- * @param {string} link - The link to the image for the new card.
- * @returns {Promise<Object>} A Promise that resolves with the created card data.
- */
+// Send a new card to the server
 export const postNewCard = (name, link) => makeRequest('cards', 'POST', { name, link });
 
-/**
- * Deletes a card from the server.
- * @param {string} id - The ID of the card to be deleted.
- * @returns {Promise<Object>} A Promise that resolves with the deleted card data.
- */
+// Delete a card from the server
 export const deleteFromTheServer = (id) => makeRequest(`cards/${id}`, 'DELETE');
 
-/**
- * Adds a like to a card on the server.
- * @param {string} cardID - The ID of the card to be liked.
- * @param {Object} likes - The likes data for the card.
- * @returns {Promise<Object>} A Promise that resolves with the updated card data.
- */
+// Adds a like to a card on the server
 export const patchNewLike = (cardID, likes) => makeRequest(`cards/likes/${cardID}`, 'PUT', { likes });
 
-/**
- * Removes a like from a card on the server.
- * @param {string} cardID - The ID of the card to remove the like from.
- * @returns {Promise<Object>} A Promise that resolves with the updated card data.
- */
+// Removes a like from a card on the server
 export const deleteLike = (cardID) => makeRequest(`cards/likes/${cardID}`, 'DELETE');
+
+// Send new avatar to the server 
+export const patchChangeUserAvatar = (avatar) => makeRequest('users/me/avatar', 'PATCH', { avatar });
+
+// Check MIME type
+export const getMimeType = async (url) => {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response; // Возвращаем объект ответа
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+};
