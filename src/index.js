@@ -3,8 +3,8 @@
 import './pages/index.css';
 import { deleteCard, likeCard, createCard, hideDeleteButton } from './scripts/card.js';
 import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
-import { enableValidation, clearValidation } from './scripts/validation.js';
-import { getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard, patchChangeUserAvatar, getMimeType } from './scripts/api.js';
+import { enableValidation, clearValidation, showInputError, hideInputError, validateImage } from './scripts/validation.js';
+import { getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard, patchChangeUserAvatar } from './scripts/api.js';
 
 // *** VALIDATION CONFIG ***
 const validationConfig = {
@@ -34,15 +34,35 @@ const inputNewAvatarLink = formNewAvatar.querySelector('.popup__input_type_url')
 
 
 // ========================================================================================== MAIN ZONE 
-// Handler function for opening the profile editing form
+// Load website's data from the server
+Promise.all([getUserData(), getInitialCardsToLoad()])
+    .then(results => {
+        const profileData = results[0];
+        const cardsData = results[1];
+
+        const profileID = profileData._id;
+
+        profileName.textContent = profileData.name;
+        profileJob.textContent = profileData.about;
+        profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
+
+        cardsData.forEach(newCardData => {
+            const card = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileData);
+            cardList.append(card);
+            hideDeleteButton(card, newCardData, profileID);
+        });
+    });
+
+
+
+// Handler function to OPEN profile edit form
 function openEditProfilePopup() {
     inputEditProfileName.value = profileName.textContent;
     inputEditProfileJob.value = profileJob.textContent;
     openPopup(formEditProfile);
     clearValidation(formEditProfile, validationConfig);
 }
-
-// Handler function for editing the profile
+// Handler function to SUBMIT edit profile form
 async function submitEditProfileButton(evt) {
     evt.preventDefault();
 
@@ -66,7 +86,83 @@ async function submitEditProfileButton(evt) {
     }
 }
 
-// Handler function for opening an image popup by click
+
+// Handler function to OPEN a new card form
+function openAddNewCardPopup() {
+    inputNewCardLink.value = '';
+    inputNewCardName.value = '';
+
+    openPopup(formNewCard);
+    clearValidation(formNewCard, validationConfig);
+}
+// Function to SUBMIT a new card creation 
+async function handleNewCardSubmit(evt) {
+    evt.preventDefault();
+    const newCardName = inputNewCardName.value;
+    const newCardLink = inputNewCardLink.value;
+
+    const formElement = document.querySelector('.popup_type_new-card');
+    const submitButton = evt.currentTarget.querySelector('.popup__button');
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = 'Сохранение...';
+
+    try {
+        await validateImage(newCardLink);
+        let newCardData = await postNewCard(newCardName, newCardLink);
+        newCardData.likes = newCardData.likes || [];
+
+        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
+        cardList.prepend(newCardElement);
+        
+        closePopup(formNewCard);
+        inputNewCardLink.value = '';
+        inputNewCardName.value = '';
+        deactivateClosingEventListeners();
+        hideInputError(formElement, inputNewAvatarLink, validationConfig);
+    } catch (error) {
+        console.error('Failed to add card:', error);
+        showInputError(formElement, inputNewAvatarLink, error.message, validationConfig);
+    } finally {
+        submitButton.textContent = originalButtonText;
+    }
+}
+
+
+// Handler function to OPEN a change avatar form
+function openEditAvatarPopup() {
+    inputNewAvatarLink.value = '';
+
+    openPopup(formNewAvatar);
+    clearValidation(formNewAvatar, validationConfig);
+}
+// Function to SUBMIT the changing of profile's avatar
+async function handleNewAvatarSubmit(evt) {
+    evt.preventDefault();
+
+    const formElement = document.querySelector('.popup_type_new-avatar');
+    const inputNewAvatarLink = formElement.querySelector('.popup__input_type_url');
+    const submitButton = evt.currentTarget.querySelector('.popup__button');
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = 'Сохранение...';
+
+    const newAvatarLink = inputNewAvatarLink.value;
+
+    try {
+        await validateImage(newAvatarLink);
+        await patchChangeUserAvatar(newAvatarLink);
+        profileImage.style.backgroundImage = `url('${newAvatarLink}')`;
+        closePopup(formNewAvatar);
+        deactivateClosingEventListeners();
+        hideInputError(formElement, inputNewAvatarLink, validationConfig);
+    } catch (error) {
+        console.error("Failed to update avatar:", error);
+        showInputError(formElement, inputNewAvatarLink, error.message, validationConfig);
+    } finally {
+        submitButton.textContent = originalButtonText;
+    }
+}
+
+// Handler function to OPEN an image popup by click
 function openScalePopup(name, link) {
     const popup = document.querySelector('.popup_type_image');
     popup.classList.add('popup_is-opened');
@@ -78,167 +174,6 @@ function openScalePopup(name, link) {
 
     activateClosingEventListeners();
 }
-
-// Function to create a new card - SUBMIT
-async function handleNewCardSubmit(evt) {
-    evt.preventDefault();
-    const newCardName = inputNewCardName.value;
-    const newCardLink = inputNewCardLink.value;
-
-    const submitButton = evt.currentTarget.querySelector('.popup__button');
-    const originalButtonText = submitButton.textContent;
-    submitButton.textContent = 'Сохранение...';
-
-    try {
-        let newCardData = await postNewCard(newCardName, newCardLink);
-        newCardData.likes = newCardData.likes || [];
-
-        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
-        cardList.prepend(newCardElement);
-        
-        closePopup(formNewCard);
-        inputNewCardLink.value = '';
-        inputNewCardName.value = '';
-        deactivateClosingEventListeners();
-    } catch (error) {
-        console.error('Failed to add card:', error);
-    } finally {
-        submitButton.textContent = originalButtonText;
-    }
-}
-
-/** 
- * Fetches the user data and initial cards from the server.
- * Renders the user profile and initial cards on the page.
- */
-Promise.all([getUserData(), getInitialCardsToLoad()])
-    .then(results => {
-        const profileData = results[0];
-        const cardsData = results[1];
-
-        const profileID = profileData._id;
-
-        profileName.textContent = profileData.name;
-        profileJob.textContent = profileData.about;
-        profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
-
-        cardsData.forEach(newCardData => {
-            const card = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileData);
-            cardList.append(card);
-            hideDeleteButton(card, newCardData, profileID);
-        });
-    });
-
-// Function to open the form for adding a new card
-function openAddNewCardPopup() {
-    inputNewCardLink.value = '';
-    inputNewCardName.value = '';
-
-    openPopup(formNewCard);
-    clearValidation(formNewCard, validationConfig);
-}
-
-
-// Function to open the form for adding a new card
-function openEditAvatarPopup() {
-    inputNewAvatarLink.value = '';
-
-    openPopup(formNewAvatar);
-    clearValidation(formNewAvatar, validationConfig);
-}
-
-// // Function to change the avatar image
-// async function handleNewAvatarSubmit(evt) {
-//     evt.preventDefault();
-//     console.log('1: ', profileImage);
-
-//     const submitButton = evt.currentTarget.querySelector('.popup__button');
-//     const originalButtonText = submitButton.textContent;
-//     submitButton.textContent = 'Сохранение...';
-
-//     const newAvatarLink = inputNewAvatarLink.value;
-//     console.log('2: ', newAvatarLink);
-
-//     if(await checkImage(newAvatarLink)) {;
-
-//         try {
-//             await patchChangeUserAvatar(newAvatarLink);
-//             profileImage.style.backgroundImage = `url('${newAvatarLink}')`;
-//             closePopup(formNewAvatar);
-//             deactivateClosingEventListeners();
-
-//         } catch (error) {
-//             console.error("Failed to update avatar:", error);
-//         } finally {
-//             submitButton.textContent = originalButtonText;
-//         }
-//     }
-// }
-
-// async function checkImage(url) {
-//     const image = new Image();
-//     image.onload = function() {
-//       if (this.width > 0) {
-//         console.log("image exists");
-//       }
-//     }
-//     image.onerror = function() {
-//       console.log("image doesn't exist");
-//     }
-//     image.src = url;
-//   }
-  
-//   // Пример использования
-//   const imageUrl = 'https://example.com/path/to/image.jpg';
-//   checkImageUrl(imageUrl);
-  
-
-async function handleNewAvatarSubmit(evt) {
-    evt.preventDefault();
-    console.log('1: ', profileImage);
-
-    const submitButton = evt.currentTarget.querySelector('.popup__button');
-    const originalButtonText = submitButton.textContent;
-    submitButton.textContent = 'Сохранение...';
-
-    const newAvatarLink = inputNewAvatarLink.value;
-    console.log('2: ', newAvatarLink);
-
-    if (await checkImage(newAvatarLink)) {
-        try {
-            await patchChangeUserAvatar(newAvatarLink);
-            profileImage.style.backgroundImage = `url('${newAvatarLink}')`;
-            closePopup(formNewAvatar);
-            deactivateClosingEventListeners();
-        } catch (error) {
-            console.error("Failed to update avatar:", error);
-        } finally {
-            submitButton.textContent = originalButtonText;
-        }
-    } else {
-        console.log("Image does not exist or could not be loaded.");
-        submitButton.textContent = originalButtonText;
-    }
-}
-
-function checkImage(url) {
-    return new Promise((resolve, reject) => {
-        const image = new Image();
-        image.onload = function() {
-            if (this.width > 0) {
-                console.log("Image exists");
-                resolve(true);
-            }
-        };
-        image.onerror = function() {
-            console.log("Image doesn't exist");
-            resolve(false);
-        };
-        image.src = url;
-    });
-}
-
-
 
 
 // ================================================================================ EVENT LISTENERS ZONE 

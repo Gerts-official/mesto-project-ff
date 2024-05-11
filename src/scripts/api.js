@@ -58,14 +58,3 @@ export const deleteLike = (cardID) => makeRequest(`cards/likes/${cardID}`, 'DELE
 
 // Send new avatar to the server 
 export const patchChangeUserAvatar = (avatar) => makeRequest('users/me/avatar', 'PATCH', { avatar });
-
-// Check MIME type
-export const getMimeType = async (url) => {
-    try {
-        const response = await fetch(url, { method: 'HEAD' });
-        return response; // Возвращаем объект ответа
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
-    }
-};
