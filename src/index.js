@@ -33,6 +33,7 @@ const inputNewAvatarLink = formNewAvatar.querySelector('.popup__input_type_url')
 
 
 
+
 // ========================================================================================== MAIN ZONE 
 // Load website's data from the server
 Promise.all([getUserData(), getInitialCardsToLoad()])
@@ -40,14 +41,17 @@ Promise.all([getUserData(), getInitialCardsToLoad()])
         const profileData = results[0];
         const cardsData = results[1];
 
+
         const profileID = profileData._id;
+
 
         profileName.textContent = profileData.name;
         profileJob.textContent = profileData.about;
         profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
 
         cardsData.forEach(newCardData => {
-            const card = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileData);
+        const card = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileData);
+            //const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
             cardList.append(card);
             hideDeleteButton(card, newCardData, profileID);
         });
@@ -63,7 +67,7 @@ function openEditProfilePopup() {
     clearValidation(formEditProfile, validationConfig);
 }
 // Handler function to SUBMIT edit profile form
-async function submitEditProfileButton(evt) {
+async function submitEditProfileForm(evt) {
     evt.preventDefault();
 
     const submitButton = evt.currentTarget.querySelector('.popup__button');
@@ -98,6 +102,7 @@ function openAddNewCardPopup() {
 // Function to SUBMIT a new card creation 
 async function handleNewCardSubmit(evt) {
     evt.preventDefault();
+
     const newCardName = inputNewCardName.value;
     const newCardLink = inputNewCardLink.value;
 
@@ -107,11 +112,12 @@ async function handleNewCardSubmit(evt) {
     submitButton.textContent = 'Сохранение...';
 
     try {
+        const profileData = await getUserData();
         await validateImage(newCardLink);
         let newCardData = await postNewCard(newCardName, newCardLink);
         newCardData.likes = newCardData.likes || [];
 
-        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
+        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileData);
         cardList.prepend(newCardElement);
         
         closePopup(formNewCard);
@@ -180,7 +186,7 @@ function openScalePopup(name, link) {
 // Event listener to OPEN the profile editing form
 document.querySelector('.profile__edit-button').addEventListener('click', openEditProfilePopup);
 // Event listener to SUBMIT profile editing form
-formEditProfile.addEventListener('submit', submitEditProfileButton);
+formEditProfile.addEventListener('submit', submitEditProfileForm);
 
 // Event listener to OPEN the add new card form 
 document.querySelector('.profile__add-button').addEventListener('click', openAddNewCardPopup);

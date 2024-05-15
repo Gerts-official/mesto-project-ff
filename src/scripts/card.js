@@ -93,6 +93,7 @@ export function deleteCard(cardElement, id) {
 export async function likeCard(likeButton, cardData, currentUser) {
     try {
         let updatedCardData;
+        console.log(currentUser);
 
         // Check if the card is liked by the current user
         const isLiked = cardData.likes.some(like => like._id === currentUser._id);
@@ -103,6 +104,7 @@ export async function likeCard(likeButton, cardData, currentUser) {
         } else {
             // If the card is not liked, send a PUT request to add a like
             updatedCardData = await patchNewLike(cardData._id);
+            console.log(cardData._id);
         }
 
         // Update the card data with the new like information from the server
