@@ -68,12 +68,17 @@ export function deleteCard(cardElement, id) {
     openPopup(deletePopup);
 
     // Complete card deletion (confirm/delete button).
-    const deleteCardComplete = () => {
-        deleteFromTheServer(id);
-        cardElement.remove();
-        closePopup(deletePopup);
-        document.removeEventListener('keydown', handleKeyDown);
-        deleteButtonConfirm.removeEventListener('click', deleteCardComplete);
+    const deleteCardComplete = async () => {
+        try {
+            await deleteFromTheServer(id);
+            cardElement.remove();
+            closePopup(deletePopup);
+            document.removeEventListener('keydown', handleKeyDown);
+            deleteButtonConfirm.removeEventListener('click', deleteCardComplete);
+        } catch (error) {
+            console.error ('Ошибка при удалении карточки:', error);
+            throw error;
+        }
     };
 
     // Handle pressing Enter on the delete button
@@ -114,7 +119,7 @@ export async function likeCard(likeButton, cardData, currentUser) {
         updateLikeVisuals(likeButton, cardData.likes.length, isLiked);
     } catch (error) {
         console.error('Error toggling like:', error);
-        // Optionally: show an error message to the user
+        throw error;
     }
 }
 

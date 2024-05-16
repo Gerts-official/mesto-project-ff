@@ -89,6 +89,7 @@ async function submitEditProfileForm(evt) {
         deactivateClosingEventListeners();
     } catch (error) {
         console.error('Failed to update profile:', error);
+        throw error;
     } finally {
         submitButton.textContent = originalButtonText;
     }
