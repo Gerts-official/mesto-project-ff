@@ -31,6 +31,9 @@ const inputNewCardLink = formNewCard.querySelector('.popup__input_type_url');
 const formNewAvatar = document.querySelector('.popup_type_new-avatar');
 const inputNewAvatarLink = formNewAvatar.querySelector('.popup__input_type_url');
 
+// GLOBAL 
+let profileDataGlobal;  
+
 
 
 
@@ -40,6 +43,7 @@ Promise.all([getUserData(), getInitialCardsToLoad()])
     .then(results => {
         const profileData = results[0];
         const cardsData = results[1];
+        profileDataGlobal = profileData;
 
 
         const profileID = profileData._id;
@@ -112,12 +116,11 @@ async function handleNewCardSubmit(evt) {
     submitButton.textContent = 'Сохранение...';
 
     try {
-        const profileData = await getUserData();
         await validateImage(newCardLink);
         let newCardData = await postNewCard(newCardName, newCardLink);
         newCardData.likes = newCardData.likes || [];
 
-        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileData);
+        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileDataGlobal);
         cardList.prepend(newCardElement);
         
         closePopup(formNewCard);
