@@ -32,8 +32,6 @@ function attachEventListeners(cardElement, cardData, cardDataToPut, deleteCardCa
 
     // Attach an event listener to the card magnifier.
     cardDataToPut.link.addEventListener('click', () => openCardCallback(cardDataToPut.name, cardDataToPut.link));
-
-    return cardElement;
 }
 
 // Updates the like button state based on whether the current user has liked the card or not.
@@ -135,6 +133,7 @@ export function createCard(cardData, deleteCardCallback, likeCardCallback, openC
     const cardTemplate = document.querySelector('#card-template').content;
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
     const cardDataToPut = setupCardData(cardElement, cardData);
+    hideDeleteButton(cardElement, cardData, profileData._id);
 
     // Attach event listeners
     attachEventListeners(cardElement, cardData, cardDataToPut, deleteCardCallback, likeCardCallback, openCardCallback, profileData);

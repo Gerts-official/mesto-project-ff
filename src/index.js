@@ -1,80 +1,49 @@
-// ========================================================================================== HEADER ZONE 
+// ===================================================== HEADER ZONE  ==========================================
 // Import SECTION
 import './pages/index.css';
 import { deleteCard, likeCard, createCard, hideDeleteButton } from './scripts/card.js';
 import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
 import { enableValidation, clearValidation, showInputError, hideInputError, validateImage } from './scripts/validation.js';
 import { getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard, patchChangeUserAvatar } from './scripts/api.js';
-
-// *** VALIDATION CONFIG ***
-const validationConfig = {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_disabled',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error_visible'
-}
-
-// DOM nodes
-const formNewCard = document.querySelector('.popup_type_new-card');
-const cardList = document.querySelector('.places__list');
-const formEditProfile = document.querySelector('.popup_type_edit');
-const profileName = document.querySelector('.profile__title');
-const profileJob = document.querySelector('.profile__description');
-const profileImage = document.querySelector('.profile__image');
-const inputEditProfileName = formEditProfile.querySelector('.popup__input_type_name');
-const inputEditProfileJob = formEditProfile.querySelector('.popup__input_type_description');
-const inputNewCardName = formNewCard.querySelector('.popup__input_type_card-name');
-const inputNewCardLink = formNewCard.querySelector('.popup__input_type_url');
-
-const formNewAvatar = document.querySelector('.popup_type_new-avatar');
-const inputNewAvatarLink = formNewAvatar.querySelector('.popup__input_type_url');
+import { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink } from './scripts/utils/constants.js';
 
 // GLOBAL 
 let profileDataGlobal;  
 
 
 
-
-// ========================================================================================== MAIN ZONE 
+// ====================================================== MAIN ZONE ===========================================
 // Load website's data from the server
 Promise.all([getUserData(), getInitialCardsToLoad()])
-    .then(results => {
-        const profileData = results[0];
-        const cardsData = results[1];
-        profileDataGlobal = profileData;
+.then(([profileData, cardsData]) => { 
+        
+    profileDataGlobal = profileData;
+    const profileID = profileData._id;
 
+    profileName.textContent = profileData.name;
+    profileJob.textContent = profileData.about;
+    profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
 
-        const profileID = profileData._id;
-
-
-        profileName.textContent = profileData.name;
-        profileJob.textContent = profileData.about;
-        profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
-
-        cardsData.forEach(newCardData => {
-        const card = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileData);
-            //const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup);
-            cardList.append(card);
-            hideDeleteButton(card, newCardData, profileID);
-        });
+    cardsData.forEach(newCardData => {
+    const card = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileDataGlobal);
+        cardList.append(card);
     });
+});
 
 
 
 // Handler function to OPEN profile edit form
-function openEditProfilePopup() {
+function openProfilePopup() {
     inputEditProfileName.value = profileName.textContent;
     inputEditProfileJob.value = profileJob.textContent;
-    openPopup(formEditProfile);
-    clearValidation(formEditProfile, validationConfig);
+    openPopup(EditProfilePopup);
+    clearValidation(EditProfilePopup, validationConfig);
 }
 // Handler function to SUBMIT edit profile form
-async function submitEditProfileForm(evt) {
+async function updateProfileSubmit(evt) {
     evt.preventDefault();
 
-    const submitButton = evt.currentTarget.querySelector('.popup__button');
+    const submitButton = evt.submitter;
     const originalButtonText = submitButton.textContent;
     submitButton.textContent = 'Сохранение...';
 
@@ -85,8 +54,7 @@ async function submitEditProfileForm(evt) {
         await patchChangedProfileData(newName, newAbout);
         profileName.textContent = newName;
         profileJob.textContent = newAbout;
-        closePopup(formEditProfile);
-        deactivateClosingEventListeners();
+        closePopup(EditProfilePopup);
     } catch (error) {
         console.error('Failed to update profile:', error);
         throw error;
@@ -97,22 +65,21 @@ async function submitEditProfileForm(evt) {
 
 
 // Handler function to OPEN a new card form
-function openAddNewCardPopup() {
+function openNewCardPopup() {
     inputNewCardLink.value = '';
     inputNewCardName.value = '';
 
-    openPopup(formNewCard);
-    clearValidation(formNewCard, validationConfig);
+    openPopup(NewCardPopup);
+    clearValidation(NewCardPopup, validationConfig);
 }
 // Function to SUBMIT a new card creation 
-async function handleNewCardSubmit(evt) {
+async function addNewCardSubmit(evt) {
     evt.preventDefault();
 
     const newCardName = inputNewCardName.value;
     const newCardLink = inputNewCardLink.value;
 
-    const formElement = document.querySelector('.popup_type_new-card');
-    const submitButton = evt.currentTarget.querySelector('.popup__button');
+    const submitButton = evt.submitter;
     const originalButtonText = submitButton.textContent;
     submitButton.textContent = 'Сохранение...';
 
@@ -124,14 +91,12 @@ async function handleNewCardSubmit(evt) {
         const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileDataGlobal);
         cardList.prepend(newCardElement);
         
-        closePopup(formNewCard);
+        closePopup(NewCardPopup);
         inputNewCardLink.value = '';
         inputNewCardName.value = '';
-        deactivateClosingEventListeners();
-        hideInputError(formElement, inputNewAvatarLink, validationConfig);
     } catch (error) {
         console.error('Failed to add card:', error);
-        showInputError(formElement, inputNewAvatarLink, error.message, validationConfig);
+        showInputError(NewCardPopup, inputNewAvatarLink, error.message, validationConfig);
     } finally {
         submitButton.textContent = originalButtonText;
     }
@@ -139,19 +104,17 @@ async function handleNewCardSubmit(evt) {
 
 
 // Handler function to OPEN a change avatar form
-function openEditAvatarPopup() {
+function openAvatarPopup() {
     inputNewAvatarLink.value = '';
 
-    openPopup(formNewAvatar);
-    clearValidation(formNewAvatar, validationConfig);
+    openPopup(NewAvatarPopup);
+    clearValidation(NewAvatarPopup, validationConfig);
 }
 // Function to SUBMIT the changing of profile's avatar
-async function handleNewAvatarSubmit(evt) {
+async function updateAvatarSubmit(evt) {
     evt.preventDefault();
 
-    const formElement = document.querySelector('.popup_type_new-avatar');
-    const inputNewAvatarLink = formElement.querySelector('.popup__input_type_url');
-    const submitButton = evt.currentTarget.querySelector('.popup__button');
+    const submitButton = evt.submitter;
     const originalButtonText = submitButton.textContent;
     submitButton.textContent = 'Сохранение...';
 
@@ -161,12 +124,10 @@ async function handleNewAvatarSubmit(evt) {
         await validateImage(newAvatarLink);
         await patchChangeUserAvatar(newAvatarLink);
         profileImage.style.backgroundImage = `url('${newAvatarLink}')`;
-        closePopup(formNewAvatar);
-        deactivateClosingEventListeners();
-        hideInputError(formElement, inputNewAvatarLink, validationConfig);
+        closePopup(NewAvatarPopup);
     } catch (error) {
         console.error("Failed to update avatar:", error);
-        showInputError(formElement, inputNewAvatarLink, error.message, validationConfig);
+        showInputError(NewAvatarPopup, inputNewAvatarLink, error.message, validationConfig);
     } finally {
         submitButton.textContent = originalButtonText;
     }
@@ -174,10 +135,10 @@ async function handleNewAvatarSubmit(evt) {
 
 // Handler function to OPEN an image popup by click
 function openScalePopup(name, link) {
-    const popup = document.querySelector('.popup_type_image');
-    popup.classList.add('popup_is-opened');
-    const popupImageLink = popup.querySelector('.popup__image');
-    const popupImageCaption = popup.querySelector('.popup__caption');
+    const scalePopup = document.querySelector('.popup_type_image');
+    openPopup(scalePopup);
+    const popupImageLink = scalePopup.querySelector('.popup__image');
+    const popupImageCaption = scalePopup.querySelector('.popup__caption');
 
     popupImageLink.src = link.src;
     popupImageCaption.textContent = name.textContent;
@@ -188,22 +149,19 @@ function openScalePopup(name, link) {
 
 // ================================================================================ EVENT LISTENERS ZONE 
 // Event listener to OPEN the profile editing form
-document.querySelector('.profile__edit-button').addEventListener('click', openEditProfilePopup);
+document.querySelector('.profile__edit-button').addEventListener('click', openProfilePopup);
 // Event listener to SUBMIT profile editing form
-formEditProfile.addEventListener('submit', submitEditProfileForm);
+EditProfilePopup.addEventListener('submit', updateProfileSubmit);
 
 // Event listener to OPEN the add new card form 
-document.querySelector('.profile__add-button').addEventListener('click', openAddNewCardPopup);
+document.querySelector('.profile__add-button').addEventListener('click', openNewCardPopup);
 // Event listener to SUBMIT the add new card form
-formNewCard.addEventListener('submit', handleNewCardSubmit);
+NewCardPopup.addEventListener('submit', addNewCardSubmit);
 
 // Event listener to OPEN the profile changing avatar form
-profileImage.addEventListener('click', openEditAvatarPopup);
+profileImage.addEventListener('click', openAvatarPopup);
 // // Event listener to SUBMIT the profile changing avatar form
-formNewAvatar.addEventListener('submit', handleNewAvatarSubmit);
-
-// Deactivate all closing event listeners attached to the document
-deactivateClosingEventListeners();
+NewAvatarPopup.addEventListener('submit', updateAvatarSubmit);
 
 // Activate validation for all the forms
 enableValidation(validationConfig);
