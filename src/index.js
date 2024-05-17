@@ -1,7 +1,7 @@
 // ===================================================== HEADER ZONE  ==========================================
 // Import SECTION
 import './pages/index.css';
-import { deleteCard, likeCard, createCard, hideDeleteButton } from './scripts/card.js';
+import { openDeletePopup, likeCard, createCard, hideDeleteButton } from './scripts/card.js';
 import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
 import { enableValidation, clearValidation, showInputError, hideInputError, validateImage } from './scripts/validation.js';
 import { getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard, patchChangeUserAvatar } from './scripts/api.js';
@@ -25,7 +25,7 @@ Promise.all([getUserData(), getInitialCardsToLoad()])
     profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
 
     cardsData.forEach(newCardData => {
-    const card = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileDataGlobal);
+    const card = createCard(newCardData, openDeletePopup, likeCard, openScalePopup, profileDataGlobal);
         cardList.append(card);
     });
 });
@@ -88,7 +88,7 @@ async function addNewCardSubmit(evt) {
         let newCardData = await postNewCard(newCardName, newCardLink);
         newCardData.likes = newCardData.likes || [];
 
-        const newCardElement = createCard(newCardData, deleteCard, likeCard, openScalePopup, profileDataGlobal);
+        const newCardElement = createCard(newCardData, openDeletePopup, likeCard, openScalePopup, profileDataGlobal);
         cardList.prepend(newCardElement);
         
         closePopup(NewCardPopup);
@@ -145,6 +145,20 @@ function openScalePopup(name, link) {
 
     activateClosingEventListeners();
 }
+
+
+
+// To submit delete card
+
+// function submitDeleteCard (evt) {
+//     evt.preventDefault();
+// console.log('confirm DELETE');
+// }
+
+// Event listener to SUBMIT card deletion 
+// deleteCardPopup.addEventListener('submit', submitDeleteCard);
+
+
 
 
 // ================================================================================ EVENT LISTENERS ZONE 

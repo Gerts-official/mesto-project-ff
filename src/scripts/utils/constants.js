@@ -8,7 +8,7 @@
     errorClass: 'popup__error_visible'
 }
 
-// DOM nodes
+// DOM nodes for index.js
  const NewCardPopup = document.querySelector('.popup_type_new-card');
  const cardList = document.querySelector('.places__list');
  const EditProfilePopup = document.querySelector('.popup_type_edit');
@@ -23,5 +23,13 @@
  const NewAvatarPopup = document.querySelector('.popup_type_new-avatar');
  const inputNewAvatarLink = NewAvatarPopup.querySelector('.popup__input_type_url');
 
+ //const deleteCardPopup = document.querySelector('.popup_type_delete');
 
  export { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink };
+
+
+ // DOM nodes for card.js
+ const deletePopup = document.querySelector('.popup_type_delete');
+ const deleteButtonConfirm = deletePopup.querySelector('.popup__button');
+
+ export { deletePopup, deleteButtonConfirm };
