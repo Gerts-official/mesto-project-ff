@@ -1,34 +1,38 @@
 // ===================================================== HEADER ZONE  ==========================================
 // Import SECTION
 import './pages/index.css';
-import { openDeletePopup, likeCard, createCard, hideDeleteButton } from './scripts/card.js';
+import { openDeletePopup, likeCard, createCard, hideDeleteButton, deleteCardGlobalTransfer } from './scripts/card.js';
 import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
 import { enableValidation, clearValidation, showInputError, hideInputError, validateImage } from './scripts/validation.js';
 import { getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard, patchChangeUserAvatar } from './scripts/api.js';
-import { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink } from './scripts/utils/constants.js';
+import { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink, deleteCardPopup } from './scripts/utils/constants.js';
 
 // GLOBAL 
 let profileDataGlobal;  
 
 
-
 // ====================================================== MAIN ZONE ===========================================
 // Load website's data from the server
-Promise.all([getUserData(), getInitialCardsToLoad()])
-.then(([profileData, cardsData]) => { 
-        
-    profileDataGlobal = profileData;
-    const profileID = profileData._id;
+(async () => {
+    // Wait for the user's data and initial set of cards to load
+    try {
+        const [profileData, cardsData] = await Promise.all([getUserData(), getInitialCardsToLoad()]);
 
-    profileName.textContent = profileData.name;
-    profileJob.textContent = profileData.about;
-    profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
+        profileDataGlobal = profileData;
+        const profileID = profileData._id;
 
-    cardsData.forEach(newCardData => {
-    const card = createCard(newCardData, openDeletePopup, likeCard, openScalePopup, profileDataGlobal);
-        cardList.append(card);
-    });
-});
+        profileName.textContent = profileData.name;
+        profileJob.textContent = profileData.about;
+        profileImage.style.backgroundImage = `url('${profileData.avatar}')`;
+
+        for (const newCardData of cardsData) {
+            const card = createCard(newCardData, openDeletePopup, likeCard, openScalePopup, profileDataGlobal);
+            cardList.append(card);
+        }
+    } catch (error) {
+        console.error('Failed to load website data:', error);
+    }
+}) ();
 
 
 
@@ -145,20 +149,6 @@ function openScalePopup(name, link) {
 
     activateClosingEventListeners();
 }
-
-
-
-// To submit delete card
-
-// function submitDeleteCard (evt) {
-//     evt.preventDefault();
-// console.log('confirm DELETE');
-// }
-
-// Event listener to SUBMIT card deletion 
-// deleteCardPopup.addEventListener('submit', submitDeleteCard);
-
-
 
 
 // ================================================================================ EVENT LISTENERS ZONE 

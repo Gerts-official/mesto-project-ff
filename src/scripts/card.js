@@ -33,7 +33,7 @@ function attachEventListeners(cardElement, cardData, cardDataToPut, deleteCardCa
     // Attach an event listener to the card like button.
     cardDataToPut.likeButton.addEventListener('click', () => likeCardCallback(cardDataToPut.likeButton, cardData, profileData));
 
-    // Attach an event listener to the card magnifier.
+    // Attach an event listener to the card magnifier
     cardDataToPut.link.addEventListener('click', () => openCardCallback(cardDataToPut.name, cardDataToPut.link));
 }
 
@@ -59,52 +59,30 @@ export function hideDeleteButton(card, cardData, ID, cardDataToPut) {
     }
 }
 
-// Handles the deletion of a card by displaying a confirmation popup and removing the card from the DOM
-// export function openDeletePopup(cardElement, id) {
-//     openPopup(deletePopup);
-// const formsfds = deleteCardPopup.querySelector('.popup__form');
-  
-//     // Complete card deletion (confirm/delete button).
-//     async function deleteCardComplete(evt) {
-//         console.log('boom!');
-//       evt.preventDefault(); // Prevent default form submission behavior (page refresh)
-  
-//       try {
-//         await deleteFromTheServer(id);
-//         cardElement.remove();
-//         closePopup(deletePopup);
-//       } catch (error) {
-//         console.error('Ошибка при удалении карточки:', error);
-//         throw error;
-//       }
-//     }
-//     formsfds.addEventListener('submit', deleteCardComplete);
-//     console.log(deleteCardPopup);
-// }
 
+let globalCard = {};
 export function openDeletePopup(cardElement, id) {
     openPopup(deletePopup);
-    const deleteForm = deleteCardPopup.querySelector('.popup__form'); 
-  
-    async function deleteCardComplete(evt) {
-      evt.preventDefault(); 
+
+    globalCard.id = id;
+    globalCard.element = cardElement;
+}
+
+async function deleteCardConfirmed () {
+
       try {
-        await deleteFromTheServer(id);
-        cardElement.remove();
+        await deleteFromTheServer(globalCard.id);
+        globalCard.element.remove();
         closePopup(deletePopup);
       } catch (error) {
         console.error('Ошибка при удалении карточки:', error);
         throw error;
       }
     }
-  
-    deleteForm.addEventListener('submit', deleteCardComplete);
-  }
-  
 
 
 // Event listener to SUBMIT card deletion 
-// deleteCardPopup.addEventListener('submit', submitDeleteCard);
+deleteCardPopup.addEventListener('submit', deleteCardConfirmed );
 
 // Toggles the like state of a card for the current user.
 export async function likeCard(likeButton, cardData, currentUser) {

@@ -43,19 +43,29 @@ export async function validateImage(url) {
         }
 }
 
-// Function for preventing invalid form submission
-const preventInvalidFormSubmission = (formElement, event) => {
-    if (!formElement.checkValidity()) {
-        event.preventDefault();
-    }
+function disableButton(buttonElement, config) {
+    buttonElement.classList.add(config.inactiveButtonClass);
+    buttonElement.disabled = true;
+}
+ 
+function enableButton(buttonElement, config) {
+    buttonElement.classList.remove(config.inactiveButtonClass);
+    buttonElement.disabled = false;
 }
 
 // Button State Management Function
 const toggleButtonState = (inputList, buttonElement, config) => {
     if (hasInvalidInput(inputList)) {
-        buttonElement.classList.add(config.inactiveButtonClass);
+        disableButton(buttonElement, config);
     } else {
-        buttonElement.classList.remove(config.inactiveButtonClass);
+        enableButton(buttonElement, config);
+    }
+}
+
+// Function for preventing invalid form submission
+const preventInvalidFormSubmission = (formElement, event) => {
+    if (!formElement.checkValidity()) {
+        event.preventDefault();
     }
 }
 
@@ -78,7 +88,6 @@ export const hideInputError = (formElement, inputElement, config) => {
     errorElement.classList.remove(config.errorClass);
     errorElement.textContent = '';
 };
-
 
 
 // ============================================ MAIN VALIDATION FUNCTIONS ============================================
@@ -105,6 +114,7 @@ const setEventListeners = (formElement, config) => {
 
 // Enable validation on form level.
 export const enableValidation = (config) => {
+    console.log('config');
     const formList = Array.from(document.querySelectorAll(config.formSelector));
 
     // Prevent page reload in the submit event.
@@ -113,12 +123,6 @@ export const enableValidation = (config) => {
             evt.preventDefault();
         })
 
-        // Prevent enter down if the form isn't valid.
-         formElement.addEventListener('keydown', (evt) => {
-            if (evt.key === 'Enter') {
-                preventInvalidFormSubmission(formElement, evt);
-            }
-        })
         setEventListeners(formElement, config);
     });
 };
@@ -128,9 +132,10 @@ export const clearValidation = (profileForm, config) => {
     const inputList = Array.from(profileForm.querySelectorAll(config.inputSelector));
     const buttonElement = profileForm.querySelector(config.submitButtonSelector);
 
-    buttonElement.classList.add(config.inactiveButtonClass);
+    disableButton(buttonElement, config);
 
     inputList.forEach((inputElement) => {
         hideInputError(profileForm, inputElement, config);
     })
 }
+

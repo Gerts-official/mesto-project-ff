@@ -14,6 +14,7 @@ module.exports = {
     publicPath: '',
   },
   mode: 'development',
+  devtool: 'eval-source-map',
   devServer: {
     static: [
         path.resolve(__dirname, './src/'),

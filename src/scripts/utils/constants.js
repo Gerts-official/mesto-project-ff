@@ -23,9 +23,9 @@
  const NewAvatarPopup = document.querySelector('.popup_type_new-avatar');
  const inputNewAvatarLink = NewAvatarPopup.querySelector('.popup__input_type_url');
 
- //const deleteCardPopup = document.querySelector('.popup_type_delete');
+ const deleteCardPopup = document.querySelector('.popup_type_delete');
 
- export { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink };
+ export { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink, deleteCardPopup };
 
 
  // DOM nodes for card.js
