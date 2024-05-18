@@ -1,10 +1,13 @@
-import { deleteFromTheServer, patchNewLike, deleteLike } from './api.js';
-import { openPopup, closePopup } from './modal.js';
-import { deletePopup, deleteButtonConfirm } from './utils/constants.js';
+import { patchNewLike, deleteLike } from './api.js';
+import { openPopup } from './modal.js';
+import { deleteCardPopup } from './utils/constants.js';
 
-const deleteCardPopup = document.querySelector('.popup_type_delete');
+// DOM and GLOBAL variables
+const cardTemplate = document.querySelector('#card-template');
+export let selectedCardGlobal = {};
 
-// SUB-FUNCTIONS of createCard main function section ============================================================
+
+//  ===================================================================================================== SUB-FUNCTIONS
 // Populates the card element with data from the provided cardData object.
 function setupCardData(cardElement, cardData) {
     const cardDataToPut = {
@@ -25,10 +28,10 @@ function setupCardData(cardElement, cardData) {
 }
 
 // Attaches event listeners to the card element for delete, like, and open actions.
-function attachEventListeners(cardElement, cardData, cardDataToPut, deleteCardCallback, likeCardCallback, openCardCallback, profileData) {
+function attachEventListeners(cardElement, cardData, cardDataToPut, openDeletePopup, likeCardCallback, openCardCallback, profileData) {
 
     // Attach an event listener to the card deletion button.
-    cardDataToPut.deleteButton.addEventListener('click', () => deleteCardCallback(cardElement, cardData._id));
+    cardDataToPut.deleteButton.addEventListener('click', () => openDeletePopup(cardElement, cardData._id));
 
     // Attach an event listener to the card like button.
     cardDataToPut.likeButton.addEventListener('click', () => likeCardCallback(cardDataToPut.likeButton, cardData, profileData));
@@ -60,35 +63,18 @@ export function hideDeleteButton(card, cardData, ID, cardDataToPut) {
 }
 
 
-let globalCard = {};
-export function openDeletePopup(cardElement, id) {
-    openPopup(deletePopup);
+ export function openDeletePopup(cardElement, id) {
+    openPopup(deleteCardPopup);
 
-    globalCard.id = id;
-    globalCard.element = cardElement;
+    selectedCardGlobal.id = id;
+    selectedCardGlobal.element = cardElement;
 }
 
-async function deleteCardConfirmed () {
-
-      try {
-        await deleteFromTheServer(globalCard.id);
-        globalCard.element.remove();
-        closePopup(deletePopup);
-      } catch (error) {
-        console.error('Ошибка при удалении карточки:', error);
-        throw error;
-      }
-    }
-
-
-// Event listener to SUBMIT card deletion 
-deleteCardPopup.addEventListener('submit', deleteCardConfirmed );
 
 // Toggles the like state of a card for the current user.
 export async function likeCard(likeButton, cardData, currentUser) {
     try {
         let updatedCardData;
-        console.log(currentUser);
 
         // Check if the card is liked by the current user
         const isLiked = cardData.likes.some(like => like._id === currentUser._id);
@@ -99,7 +85,6 @@ export async function likeCard(likeButton, cardData, currentUser) {
         } else {
             // If the card is not liked, send a PUT request to add a like
             updatedCardData = await patchNewLike(cardData._id);
-            console.log(cardData._id);
         }
 
         // Update the card data with the new like information from the server
@@ -120,10 +105,11 @@ function updateLikeVisuals(likeButton, likeCount, isLiked) {
     likeButton.classList.toggle('card__like-button_is-active', !isLiked);
 }
 
-// MAIN createCard function ===========================================================================
+//=========================================================================================== MAIN createCard function
+
 export function createCard(cardData, openDeletePopupCallback, likeCardCallback, openCardCallback, profileData) {
-    const cardTemplate = document.querySelector('#card-template').content;
-    const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
+    const cardContent = cardTemplate.content.cloneNode(true);
+    const cardElement = cardContent.querySelector('.places__item');
     const cardDataToPut = setupCardData(cardElement, cardData);
     hideDeleteButton(cardElement, cardData, profileData._id, cardDataToPut);
 

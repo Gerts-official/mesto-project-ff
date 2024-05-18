@@ -1,17 +1,17 @@
-// ===================================================== HEADER ZONE  ==========================================
+// ========================================================================================================= HEADER ZONE  
 // Import SECTION
 import './pages/index.css';
-import { openDeletePopup, likeCard, createCard, hideDeleteButton, deleteCardGlobalTransfer } from './scripts/card.js';
-import { openPopup, closePopup, activateClosingEventListeners, deactivateClosingEventListeners } from './scripts/modal.js';
-import { enableValidation, clearValidation, showInputError, hideInputError, validateImage } from './scripts/validation.js';
-import { getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard, patchChangeUserAvatar } from './scripts/api.js';
-import { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink, deleteCardPopup } from './scripts/utils/constants.js';
+import { openDeletePopup, likeCard, createCard, selectedCardGlobal } from './scripts/card.js';
+import { openPopup, closePopup, activateClosingEventListeners } from './scripts/modal.js';
+import { enableValidation, clearValidation, showInputError, validateImage } from './scripts/validation.js';
+import { getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard, patchChangeUserAvatar, deleteFromTheServer } from './scripts/api.js';
+import { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink, deleteCardPopup, newCardForm, editProfileForm, newAvatarForm, deleteCardForm } from './scripts/utils/constants.js';
 
 // GLOBAL 
 let profileDataGlobal;  
 
 
-// ====================================================== MAIN ZONE ===========================================
+// ========================================================================================================= MAIN ZONE 
 // Load website's data from the server
 (async () => {
     // Wait for the user's data and initial set of cards to load
@@ -19,7 +19,6 @@ let profileDataGlobal;
         const [profileData, cardsData] = await Promise.all([getUserData(), getInitialCardsToLoad()]);
 
         profileDataGlobal = profileData;
-        const profileID = profileData._id;
 
         profileName.textContent = profileData.name;
         profileJob.textContent = profileData.about;
@@ -33,7 +32,6 @@ let profileDataGlobal;
         console.error('Failed to load website data:', error);
     }
 }) ();
-
 
 
 // Handler function to OPEN profile edit form
@@ -70,9 +68,8 @@ async function updateProfileSubmit(evt) {
 
 // Handler function to OPEN a new card form
 function openNewCardPopup() {
-    inputNewCardLink.value = '';
-    inputNewCardName.value = '';
-
+    newCardForm.reset();
+    
     openPopup(NewCardPopup);
     clearValidation(NewCardPopup, validationConfig);
 }
@@ -96,8 +93,6 @@ async function addNewCardSubmit(evt) {
         cardList.prepend(newCardElement);
         
         closePopup(NewCardPopup);
-        inputNewCardLink.value = '';
-        inputNewCardName.value = '';
     } catch (error) {
         console.error('Failed to add card:', error);
         showInputError(NewCardPopup, inputNewAvatarLink, error.message, validationConfig);
@@ -109,7 +104,7 @@ async function addNewCardSubmit(evt) {
 
 // Handler function to OPEN a change avatar form
 function openAvatarPopup() {
-    inputNewAvatarLink.value = '';
+    newAvatarForm.reset();
 
     openPopup(NewAvatarPopup);
     clearValidation(NewAvatarPopup, validationConfig);
@@ -151,7 +146,28 @@ function openScalePopup(name, link) {
 }
 
 
-// ================================================================================ EVENT LISTENERS ZONE 
+// Function to SUBMIT the deletion of a card
+async function deleteCardConfirmed (evt) {
+    evt.preventDefault();
+    const submitButton = evt.submitter;
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = 'Удаление...';
+
+    try {
+      await deleteFromTheServer(selectedCardGlobal.id);
+      selectedCardGlobal.element.remove();
+      closePopup(deleteCardPopup);
+    } catch (error) {
+      console.error('Ошибка при удалении карточки:', error);
+      throw error;
+    } finally {
+        submitButton.textContent = originalButtonText;
+    }
+  }
+
+
+
+// ============================================================================================= EVENT LISTENERS ZONE 
 // Event listener to OPEN the profile editing form
 document.querySelector('.profile__edit-button').addEventListener('click', openProfilePopup);
 // Event listener to SUBMIT profile editing form
@@ -160,12 +176,15 @@ EditProfilePopup.addEventListener('submit', updateProfileSubmit);
 // Event listener to OPEN the add new card form 
 document.querySelector('.profile__add-button').addEventListener('click', openNewCardPopup);
 // Event listener to SUBMIT the add new card form
-NewCardPopup.addEventListener('submit', addNewCardSubmit);
+newCardForm.addEventListener('submit', addNewCardSubmit);
 
 // Event listener to OPEN the profile changing avatar form
 profileImage.addEventListener('click', openAvatarPopup);
 // // Event listener to SUBMIT the profile changing avatar form
-NewAvatarPopup.addEventListener('submit', updateAvatarSubmit);
+newAvatarForm.addEventListener('submit', updateAvatarSubmit);
 
-// Activate validation for all the forms
+// Event listener to SUBMIT card deletion 
+deleteCardForm.addEventListener('submit', deleteCardConfirmed );
+
+// Enable validation
 enableValidation(validationConfig);

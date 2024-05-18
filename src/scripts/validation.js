@@ -1,4 +1,4 @@
-// ============================================ HELPER FUNCTIONS ============================================
+// ============================================================================================= HELPER FUNCTIONS 
 
 // The function checks if all the inputs are valid. Returns true if any of the fields are false.
 const hasInvalidInput = (inputList) => inputList.some(input => !input.validity.valid); 
@@ -70,8 +70,7 @@ const preventInvalidFormSubmission = (formElement, event) => {
 }
 
 
-
-// ============================================ SHOW/HIDE ERROR FUNCTIONS ============================================
+// ======================================================================================== SHOW/HIDE ERROR FUNCTIONS
 
 // Function to show the error 
 export const showInputError = (formElement, inputElement, errorMessage, config) => {
@@ -90,7 +89,7 @@ export const hideInputError = (formElement, inputElement, config) => {
 };
 
 
-// ============================================ MAIN VALIDATION FUNCTIONS ============================================
+// ======================================================================================== MAIN VALIDATION FUNCTIONS
 
 // Enable input validation on input level.
 const setEventListeners = (formElement, config) => {
@@ -114,7 +113,6 @@ const setEventListeners = (formElement, config) => {
 
 // Enable validation on form level.
 export const enableValidation = (config) => {
-    console.log('config');
     const formList = Array.from(document.querySelectorAll(config.formSelector));
 
     // Prevent page reload in the submit event.
