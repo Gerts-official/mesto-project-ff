@@ -1,6 +1,6 @@
 import { patchNewLike, deleteLike } from './api.js';
 import { openPopup } from './modal.js';
-import { deleteCardPopup } from './utils/constants.js';
+import { deleteCardPopup, deleteCardSubmitButton } from './utils/constants.js';
 
 // DOM and GLOBAL variables
 const cardTemplate = document.querySelector('#card-template');
@@ -65,6 +65,8 @@ export function hideDeleteButton(card, cardData, ID, cardDataToPut) {
 
  export function openDeletePopup(cardElement, id) {
     openPopup(deleteCardPopup);
+
+    deleteCardSubmitButton.focus();
 
     selectedCardGlobal.id = id;
     selectedCardGlobal.element = cardElement;

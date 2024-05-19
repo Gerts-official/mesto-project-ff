@@ -31,13 +31,10 @@ const inputEditProfileName = EditProfilePopup.querySelector('.popup__input_type_
 const inputEditProfileJob = EditProfilePopup.querySelector('.popup__input_type_description');
 const inputNewCardName = NewCardPopup.querySelector('.popup__input_type_card-name');
 const inputNewCardLink = NewCardPopup.querySelector('.popup__input_type_url');
-
 const inputNewAvatarLink = NewAvatarPopup.querySelector('.popup__input_type_url');
+const deleteCardSubmitButton = deleteCardForm.querySelector('.popup__button');
 
 
 export { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage,
      inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink,
-      deleteCardPopup, newCardForm, editProfileForm, newAvatarForm, deleteCardForm };
-
-
-
+      deleteCardPopup, newCardForm, editProfileForm, newAvatarForm, deleteCardForm, deleteCardSubmitButton };

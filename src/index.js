@@ -5,7 +5,7 @@ import { openDeletePopup, likeCard, createCard, selectedCardGlobal } from './scr
 import { openPopup, closePopup, activateClosingEventListeners } from './scripts/modal.js';
 import { enableValidation, clearValidation, showInputError, validateImage } from './scripts/validation.js';
 import { getUserData, getInitialCardsToLoad, patchChangedProfileData, postNewCard, patchChangeUserAvatar, deleteFromTheServer } from './scripts/api.js';
-import { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink, deleteCardPopup, newCardForm, editProfileForm, newAvatarForm, deleteCardForm } from './scripts/utils/constants.js';
+import { validationConfig, NewCardPopup, cardList, EditProfilePopup, profileName, profileJob, profileImage, inputEditProfileName, inputEditProfileJob, inputNewCardName, inputNewCardLink, NewAvatarPopup, inputNewAvatarLink, deleteCardPopup, newCardForm, newAvatarForm, deleteCardForm } from './scripts/utils/constants.js';
 
 // GLOBAL 
 let profileDataGlobal;  
@@ -69,9 +69,9 @@ async function updateProfileSubmit(evt) {
 // Handler function to OPEN a new card form
 function openNewCardPopup() {
     newCardForm.reset();
-    
     openPopup(NewCardPopup);
     clearValidation(NewCardPopup, validationConfig);
+    inputNewCardName.focus();
 }
 // Function to SUBMIT a new card creation 
 async function addNewCardSubmit(evt) {
@@ -108,6 +108,7 @@ function openAvatarPopup() {
 
     openPopup(NewAvatarPopup);
     clearValidation(NewAvatarPopup, validationConfig);
+    inputNewAvatarLink.focus();
 }
 // Function to SUBMIT the changing of profile's avatar
 async function updateAvatarSubmit(evt) {
@@ -148,10 +149,10 @@ function openScalePopup(name, link) {
 
 // Function to SUBMIT the deletion of a card
 async function deleteCardConfirmed (evt) {
-    evt.preventDefault();
     const submitButton = evt.submitter;
     const originalButtonText = submitButton.textContent;
     submitButton.textContent = 'Удаление...';
+
 
     try {
       await deleteFromTheServer(selectedCardGlobal.id);
@@ -184,7 +185,7 @@ profileImage.addEventListener('click', openAvatarPopup);
 newAvatarForm.addEventListener('submit', updateAvatarSubmit);
 
 // Event listener to SUBMIT card deletion 
-deleteCardForm.addEventListener('submit', deleteCardConfirmed );
+deleteCardForm.addEventListener('submit', deleteCardConfirmed);
 
 // Enable validation
 enableValidation(validationConfig);
