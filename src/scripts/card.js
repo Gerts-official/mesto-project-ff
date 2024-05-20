@@ -96,7 +96,6 @@ export async function likeCard(likeButton, cardData, currentUser) {
         updateLikeVisuals(likeButton, cardData.likes.length, isLiked);
     } catch (error) {
         console.error('Error toggling like:', error);
-        throw error;
     }
 }
 

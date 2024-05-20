@@ -58,5 +58,3 @@ export const deleteLike = (cardID) => makeRequest(`cards/likes/${cardID}`, 'DELE
 
 // Send new avatar to the server 
 export const patchChangeUserAvatar = (avatar) => makeRequest('users/me/avatar', 'PATCH', { avatar });
-
- 
