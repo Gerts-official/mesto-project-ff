@@ -47,7 +47,7 @@ async function updateProfileSubmit(evt) {
 
     const submitButton = evt.submitter;
     const originalButtonText = submitButton.textContent;
-    submitButton.textContent = 'Сохранение...';
+    submitButton.textContent = 'Saving...';
 
     const newName = inputEditProfileName.value;
     const newAbout = inputEditProfileJob.value;
@@ -81,7 +81,7 @@ async function addNewCardSubmit(evt) {
 
     const submitButton = evt.submitter;
     const originalButtonText = submitButton.textContent;
-    submitButton.textContent = 'Сохранение...';
+    submitButton.textContent = 'Saving...';
 
     try {
         await validateImage(newCardLink);
@@ -115,7 +115,7 @@ async function updateAvatarSubmit(evt) {
 
     const submitButton = evt.submitter;
     const originalButtonText = submitButton.textContent;
-    submitButton.textContent = 'Сохранение...';
+    submitButton.textContent = 'Saving...';
 
     const newAvatarLink = inputNewAvatarLink.value;
 
@@ -136,7 +136,7 @@ async function updateAvatarSubmit(evt) {
 function openScalePopup(name, link) {
     openPopup(scaleImagePopup);
     popupImageLink.src = link.src;
-    popupImageLink.alt = `На картинке изображено: ${name.textContent}`;
+    popupImageLink.alt = `The image of: ${name.textContent}`;
     popupImageCaption.textContent = name.textContent;
 }
 
@@ -145,14 +145,14 @@ function openScalePopup(name, link) {
 async function deleteCardConfirmed (evt) {
     const submitButton = evt.submitter;
     const originalButtonText = submitButton.textContent;
-    submitButton.textContent = 'Удаление...';
+    submitButton.textContent = 'Deleting...';
 
     try {
       await deleteFromTheServer(selectedCardGlobal.id);
       selectedCardGlobal.element.remove();
       closePopup(deleteCardPopup);
     } catch (error) {
-      console.error('Ошибка при удалении карточки:', error);
+      console.error('Error deleting card:"', error);
     } finally {
         submitButton.textContent = originalButtonText;
     }

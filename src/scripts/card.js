@@ -21,7 +21,7 @@ function setupCardData(cardElement, cardData) {
 
     cardDataToPut.name.textContent = cardData.name;
     cardDataToPut.link.src = cardData.link;
-    cardDataToPut.altText.alt = 'На картинке изображено: ' + cardData.name;
+    cardDataToPut.altText.alt = 'The image of: ' + cardData.name;
     cardDataToPut.likeCount.textContent = Array.isArray(cardData.likes) ? cardData.likes.length : 0;
 
     return cardDataToPut;

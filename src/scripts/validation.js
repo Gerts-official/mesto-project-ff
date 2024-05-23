@@ -35,7 +35,7 @@ export async function validateImage(url) {
     try {
         const imageExists = await checkImage(url);
         if (!imageExists) {
-            throw new Error('Изображение не существует или не может быть загружено. Пожалуйста проверьте ссылку');
+            throw new Error('Image does not exist or cannot be loaded. Please check the link');
             } 
         } catch (error) {
         console.error('Failed to update profile:', error);
